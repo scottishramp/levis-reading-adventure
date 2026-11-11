@@ -15,7 +15,7 @@ window.LeviOverworld = (function () {
     onSelectLevelCallback = onSelectLevel;
   }
 
-  function render(progressState, animateFromNodeId, animateToNodeId) {
+  function render(progressState, animateFromNodeId, animateToNodeId, onWalkComplete) {
     if (!containerEl) return;
     const levels = window.LeviLevels.LEVELS;
     const unlockedMax = progressState.unlockAll ? 16 : progressState.highestUnlocked;
@@ -250,8 +250,10 @@ window.LeviOverworld = (function () {
 
     if (animateFromNodeId && animateToNodeId && animateFromNodeId !== animateToNodeId) {
       setTimeout(() => {
-        walkLeviToNode(animateToNodeId);
-      }, 280);
+        walkLeviToNode(animateToNodeId, onWalkComplete);
+      }, 220);
+    } else if (onWalkComplete) {
+      setTimeout(onWalkComplete, 220);
     }
   }
 

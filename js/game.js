@@ -116,7 +116,7 @@ window.LeviGame = (function () {
     btn.classList.toggle('active', state.unlockAll);
   }
 
-  function showOverworld(animateFromId, animateToId) {
+  function showOverworld(animateFromId, animateToId, onWalkComplete) {
     state.screen = 'overworld';
     const topHeader = document.getElementById('top-header');
     if (topHeader) topHeader.classList.remove('hidden');
@@ -124,7 +124,7 @@ window.LeviGame = (function () {
     document.getElementById('screen-overworld').classList.remove('hidden');
     document.getElementById('screen-scene').classList.add('hidden');
 
-    window.LeviOverworld.render(state, animateFromId, animateToId);
+    window.LeviOverworld.render(state, animateFromId, animateToId, onWalkComplete);
   }
 
   function startLevel(levelId, forceRandom) {
@@ -308,6 +308,18 @@ window.LeviGame = (function () {
       targetEl.addEventListener('click', () => {
         if (puzzleProgress.completed) return;
         const targetId = targetEl.getAttribute('data-target-id');
+        const targetDef = activePuzzle.targets.find((t) => t.id === targetId);
+
+        // Tapping a container (jar/box/spot), light, or button always toggles/activates it directly
+        if (
+          targetDef &&
+          (targetDef.role === 'container' ||
+            targetDef.role === 'light' ||
+            targetDef.role === 'button')
+        ) {
+          handleDirectTargetTap(targetId, targetEl);
+          return;
+        }
 
         if (selectedItemUid) {
           const itemObj = puzzleProgress.DynamicItems.find((i) => i.uid === selectedItemUid);
@@ -447,9 +459,38 @@ window.LeviGame = (function () {
     if (!targetDef) return;
     const tState = puzzleProgress.targetStates[targetId];
 
-    // 1. Opening a Container (Jar, Magic Box, Beach Hiding Spot, Castle Hiding Spot)
+    // 1. Opening or Closing a Container (Jar, Magic Box, Beach Hiding Spot, Castle Hiding Spot)
     if (targetDef.role === 'container') {
-      if (tState.open) return;
+      // If already open, tapping it again closes it and puts its key/tool back inside!
+      if (tState.open) {
+        tState.open = false;
+        puzzleProgress.DynamicItems = puzzleProgress.DynamicItems.filter(
+          (it) => it.fromContainer !== targetId
+        );
+        if (
+          selectedItemUid &&
+          !puzzleProgress.DynamicItems.some((i) => i.uid === selectedItemUid && !i.consumed)
+        ) {
+          selectedItemUid = null;
+        }
+        if (window.LeviAudio) window.LeviAudio.playPop();
+        updateSceneDOM();
+        return;
+      }
+
+      // Close any other open container whose item hasn't been used yet so the player never gets stuck
+      activePuzzle.targets.forEach((otherT) => {
+        if (otherT.role === 'container' && otherT.id !== targetId) {
+          const otherState = puzzleProgress.targetStates[otherT.id];
+          if (otherState && otherState.open) {
+            otherState.open = false;
+            puzzleProgress.DynamicItems = puzzleProgress.DynamicItems.filter(
+              (it) => it.fromContainer !== otherT.id
+            );
+          }
+        }
+      });
+
       tState.open = true;
       if (window.LeviAudio) {
         window.LeviAudio.playPop();
@@ -457,14 +498,17 @@ window.LeviGame = (function () {
       }
 
       const spawnedId = targetDef.keyId;
+      const newUid = `spawned_${targetId}_${Date.now()}`;
       puzzleProgress.DynamicItems.push({
-        uid: `spawned_${targetId}_${Date.now()}`,
+        uid: newUid,
         id: spawnedId,
         fromContainer: targetId,
         label: spawnedId,
         consumed: false,
         freshlySpawned: true
       });
+      // Auto-select the newly revealed key/tool so the player can either drag it OR tap the door/target directly!
+      selectedItemUid = newUid;
 
       updateSceneDOM();
       return;
@@ -624,13 +668,15 @@ window.LeviGame = (function () {
           window.LeviAudio.playStepSuccess();
         }
         const plantId = activePuzzle.targetPlant;
+        const bloomUid = `bloomed_${plantId}_${Date.now()}`;
         puzzleProgress.DynamicItems.push({
-          uid: `bloomed_${plantId}_${Date.now()}`,
+          uid: bloomUid,
           id: plantId,
           label: window.LeviLevels.LABELS[plantId].singular,
           consumed: false,
           freshlySpawned: true
         });
+        selectedItemUid = bloomUid;
         updateSceneDOM();
         return;
       }
@@ -705,13 +751,16 @@ window.LeviGame = (function () {
           window.LeviAudio.playStepSuccess();
         }
         const gemId = activePuzzle.targetGem;
+        const gemUid = `gem_${gemId}_${Date.now()}`;
+        puzzleProgress.DynamicItems = puzzleProgress.DynamicItems.filter((it) => !it.consumed);
         puzzleProgress.DynamicItems.push({
-          uid: `gem_${gemId}_${Date.now()}`,
+          uid: gemUid,
           id: gemId,
           label: window.LeviLevels.LABELS[gemId].singular,
           consumed: false,
           freshlySpawned: true
         });
+        selectedItemUid = gemUid;
         updateSceneDOM();
         return;
       }
@@ -850,7 +899,13 @@ window.LeviGame = (function () {
       }
       const fromId = state.currentLevelId;
       const toId = state.currentLevelId < 16 ? state.currentLevelId + 1 : 16;
-      showOverworld(fromId, toId);
+      if (isFinalLevel) {
+        showOverworld(fromId, toId);
+      } else {
+        showOverworld(fromId, toId, () => {
+          startLevel(toId);
+        });
+      }
     });
   }
 

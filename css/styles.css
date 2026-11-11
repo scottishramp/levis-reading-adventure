@@ -442,11 +442,13 @@ body {
 
 .scene-targets-zone {
   flex: 1;
+  min-height: 0;
   display: flex;
   align-items: center;
+  align-content: center;
   justify-content: center;
   flex-wrap: wrap;
-  gap: clamp(10px, 2.2vw, 26px);
+  gap: clamp(8px, 2vw, 24px);
   max-width: 1100px;
   width: 100%;
   margin: 0 auto;
@@ -455,8 +457,8 @@ body {
 
 .scene-target-card {
   position: relative;
-  width: clamp(96px, 17vw, 160px);
-  height: clamp(96px, 23vh, 164px);
+  width: clamp(72px, min(18vw, 22dvh), 156px);
+  height: clamp(72px, min(18vw, 22dvh), 156px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -563,26 +565,29 @@ body {
    ========================================================================== */
 
 .scene-items-zone {
-  min-height: clamp(88px, 22vh, 136px);
+  flex-shrink: 0;
+  min-height: clamp(68px, 16dvh, 130px);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  gap: clamp(10px, 2.2vw, 22px);
-  padding: 8px 14px;
+  gap: clamp(6px, 1.8vw, 20px);
+  padding: 8px 12px;
+  margin-bottom: env(safe-area-inset-bottom, 4px);
   background: rgba(255, 253, 245, 0.25);
   border: 3px dashed rgba(255, 255, 255, 0.45);
   border-radius: 24px;
   max-width: 1020px;
   width: 100%;
-  margin: 0 auto;
+  margin-left: auto;
+  margin-right: auto;
   z-index: 10;
 }
 
 .scene-item-sticker {
   position: relative;
-  width: clamp(70px, 12.5vw, 106px);
-  height: clamp(70px, 14.5vh, 106px);
+  width: clamp(54px, min(14vw, 13.5dvh), 102px);
+  height: clamp(54px, min(14vw, 13.5dvh), 102px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -768,7 +773,7 @@ body {
    Mobile Portrait & Small Screen Tweaks
    ========================================================================== */
 
-@media (max-width: 640px) {
+@media (max-width: 640px), (max-height: 700px) {
   .top-header {
     padding: 6px 10px;
   }
@@ -778,23 +783,42 @@ body {
     font-size: 16px;
   }
   .sentence-banner-wrap {
-    padding: 8px 8px 4px;
-    gap: 8px;
+    padding: 6px 8px 4px;
+    gap: 6px;
   }
   .scene-nav-btn {
-    width: 42px;
-    height: 42px;
+    width: 38px;
+    height: 38px;
+    font-size: 1.05rem;
+    padding: 4px;
   }
   .sentence-card {
-    padding: 8px 12px;
-    border-radius: 16px;
+    padding: 6px 10px;
+    border-radius: 14px;
+    border-width: 3px;
+  }
+  .sentence-text-container {
+    font-size: clamp(1.15rem, 4.4vw, 1.55rem);
+    line-height: 1.22;
+  }
+  .scene-stage {
+    padding: 4px 8px 8px;
+  }
+  .scene-targets-zone {
+    gap: 6px 10px;
   }
   .scene-target-card {
-    width: clamp(82px, 27vw, 118px);
-    height: clamp(82px, 16vh, 118px);
+    width: clamp(62px, min(26vw, 17.5dvh), 104px);
+    height: clamp(62px, min(26vw, 17.5dvh), 104px);
+  }
+  .scene-items-zone {
+    min-height: clamp(58px, 12dvh, 88px);
+    padding: 6px 6px;
+    gap: 6px;
+    border-radius: 18px;
   }
   .scene-item-sticker {
-    width: clamp(62px, 19vw, 84px);
-    height: clamp(62px, 11vh, 84px);
+    width: clamp(48px, min(15.5vw, 11dvh), 74px);
+    height: clamp(48px, min(15.5vw, 11dvh), 74px);
   }
 }

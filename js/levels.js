@@ -290,16 +290,14 @@ window.LeviLevels = (function () {
         const animalWord = LABELS[combo.animal];
         const sentence = `Feed the ${animalWord} ${numWord} ${foodWord}.`;
 
-        // Spawn 3 of the required food and 2 of two distractor foods (7 draggable foods total)
+        // Spawn 3 of the required food and 1 of two distractor foods (5 draggable foods total so they fit cleanly on mobile)
         const otherFoods = shuffle(this.foodsPool.filter((f) => f !== combo.food)).slice(0, 2);
         const itemInstances = [];
-        for (let i = 0; i < Math.max(3, combo.count + 1); i++) {
+        for (let i = 0; i < 3; i++) {
           itemInstances.push({ uid: `${combo.food}_req_${i}`, id: combo.food, label: LABELS[combo.food].singular });
         }
         otherFoods.forEach((fId) => {
-          for (let i = 0; i < 2; i++) {
-            itemInstances.push({ uid: `${fId}_dist_${i}`, id: fId, label: LABELS[fId].singular });
-          }
+          itemInstances.push({ uid: `${fId}_dist_0`, id: fId, label: LABELS[fId].singular });
         });
 
         return {
@@ -500,13 +498,11 @@ window.LeviLevels = (function () {
 
         const otherFoods = shuffle(this.foodsPool.filter((f) => f !== combo.food)).slice(0, 2);
         const itemInstances = [];
-        for (let i = 0; i < Math.max(3, combo.count + 1); i++) {
+        for (let i = 0; i < 3; i++) {
           itemInstances.push({ uid: `${combo.food}_req_${i}`, id: combo.food, label: LABELS[combo.food].singular });
         }
         otherFoods.forEach((fId) => {
-          for (let i = 0; i < 2; i++) {
-            itemInstances.push({ uid: `${fId}_dist_${i}`, id: fId, label: LABELS[fId].singular });
-          }
+          itemInstances.push({ uid: `${fId}_dist_0`, id: fId, label: LABELS[fId].singular });
         });
 
         return {
@@ -700,13 +696,11 @@ window.LeviLevels = (function () {
 
         const otherFoods = shuffle(this.foodsPool.filter((f) => f !== combo.food)).slice(0, 2);
         const itemInstances = [];
-        for (let i = 0; i < Math.max(3, combo.count + 1); i++) {
+        for (let i = 0; i < 3; i++) {
           itemInstances.push({ uid: `${combo.food}_req_${i}`, id: combo.food, label: LABELS[combo.food].singular });
         }
         otherFoods.forEach((fId) => {
-          for (let i = 0; i < 2; i++) {
-            itemInstances.push({ uid: `${fId}_dist_${i}`, id: fId, label: LABELS[fId].singular });
-          }
+          itemInstances.push({ uid: `${fId}_dist_0`, id: fId, label: LABELS[fId].singular });
         });
 
         return {
