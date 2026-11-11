@@ -1,7 +1,7 @@
 /**
  * Levi's Reading Adventure - Mario-Style Overworld Map
  * Renders a vibrant interactive SVG storybook island map with 4 biome worlds,
- * winding paths, 16 level nodes, star badges, and an animated walking Levi character.
+ * winding paths, 16 numbered level pads, star badges, and an animated walking Levi character.
  */
 
 window.LeviOverworld = (function () {
@@ -47,11 +47,10 @@ window.LeviOverworld = (function () {
       }" stroke-width="8" stroke-linecap="round" stroke-dasharray="1 18" />`;
     }
 
-    // Build Level Nodes SVG groups
+    // Build Level Nodes SVG groups (clean numbered pads without text clutter)
     let nodesMarkup = '';
     levels.forEach((lvl) => {
       const isCompleted = !!progressState.completed[lvl.id];
-      const starsCount = progressState.stars[lvl.id] || 0;
       const isUnlocked = progressState.unlockAll || lvl.id <= unlockedMax;
       const isNextToPlay = !isCompleted && lvl.id === unlockedMax;
 
@@ -66,16 +65,16 @@ window.LeviOverworld = (function () {
       }
 
       const pulseRing = isNextToPlay
-        ? `<circle cx="${lvl.mapX}" cy="${lvl.mapY}" r="36" fill="none" stroke="#fde047" stroke-width="5" class="map-node-pulse"/>`
+        ? `<circle cx="${lvl.mapX}" cy="${lvl.mapY}" r="38" fill="none" stroke="#fde047" stroke-width="5" class="map-node-pulse"/>`
         : '';
 
       const starBadge = isCompleted
-        ? `<g transform="translate(${lvl.mapX + 20}, ${lvl.mapY - 24})">
+        ? `<g transform="translate(${lvl.mapX + 22}, ${lvl.mapY - 22})">
              <circle cx="0" cy="0" r="13" fill="#fef08a" stroke="#ca8a04" stroke-width="2.5"/>
              <text x="0" y="5" text-anchor="middle" font-size="15">⭐</text>
            </g>`
         : !isUnlocked
-        ? `<g transform="translate(${lvl.mapX + 20}, ${lvl.mapY - 24})">
+        ? `<g transform="translate(${lvl.mapX + 22}, ${lvl.mapY - 22})">
              <circle cx="0" cy="0" r="12" fill="#e2e8f0" stroke="#475569" stroke-width="2"/>
              <text x="0" y="4" text-anchor="middle" font-size="12">🔒</text>
            </g>`
@@ -86,28 +85,20 @@ window.LeviOverworld = (function () {
         isNextToPlay ? 'next-node' : ''
       }" data-level-id="${lvl.id}" tabindex="${isUnlocked ? '0' : '-1'}" role="button" aria-label="Level ${
         lvl.id
-      }: ${lvl.title}">
+      }">
           ${pulseRing}
           <!-- 3D shadow & base -->
-          <ellipse cx="${lvl.mapX}" cy="${lvl.mapY + 9}" rx="31" ry="20" fill="rgba(0,0,0,0.28)"/>
-          <ellipse cx="${lvl.mapX}" cy="${lvl.mapY + 5}" rx="29" ry="18" fill="${padRim}" stroke="#2d231e" stroke-width="3"/>
-          <ellipse cx="${lvl.mapX}" cy="${lvl.mapY}" rx="29" ry="18" fill="${padFill}" stroke="#2d231e" stroke-width="3"/>
-          <ellipse cx="${lvl.mapX}" cy="${lvl.mapY - 2}" rx="21" ry="11" fill="rgba(255,255,255,0.28)"/>
+          <ellipse cx="${lvl.mapX}" cy="${lvl.mapY + 9}" rx="32" ry="21" fill="rgba(0,0,0,0.28)"/>
+          <ellipse cx="${lvl.mapX}" cy="${lvl.mapY + 5}" rx="30" ry="19" fill="${padRim}" stroke="#2d231e" stroke-width="3"/>
+          <ellipse cx="${lvl.mapX}" cy="${lvl.mapY}" rx="30" ry="19" fill="${padFill}" stroke="#2d231e" stroke-width="3"/>
+          <ellipse cx="${lvl.mapX}" cy="${lvl.mapY - 2}" rx="22" ry="12" fill="rgba(255,255,255,0.28)"/>
 
-          <!-- Level Number & Icon -->
+          <!-- Level Number -->
           <text x="${lvl.mapX}" y="${
-        lvl.mapY + 6
-      }" text-anchor="middle" font-family="'Fredoka', 'Nunito', sans-serif" font-weight="800" font-size="17" fill="#ffffff" stroke="#2d231e" stroke-width="3" paint-order="stroke">${
+        lvl.mapY + 7
+      }" text-anchor="middle" font-family="'Fredoka', 'Nunito', sans-serif" font-weight="800" font-size="20" fill="#ffffff" stroke="#2d231e" stroke-width="3.5" paint-order="stroke">${
         lvl.id
-      } ${lvl.icon}</text>
-
-          <!-- Floating Label Pill -->
-          <g transform="translate(${lvl.mapX}, ${lvl.mapY + 33})" class="map-node-label">
-            <rect x="-66" y="-11" width="132" height="22" rx="11" fill="#fffbeb" stroke="#2d231e" stroke-width="2.5"/>
-            <text x="0" y="4" text-anchor="middle" font-family="'Fredoka', 'Nunito', sans-serif" font-weight="700" font-size="11.5" fill="#2d231e">${
-              lvl.title
-            }</text>
-          </g>
+      }</text>
           ${starBadge}
         </g>
       `;
@@ -159,29 +150,23 @@ window.LeviOverworld = (function () {
 
           <!-- Main Storybook Continent & Biome Regions -->
           <g filter="url(#islandShadow)">
-            <!-- Sandy Coast / Island Base -->
             <path d="M 55 510 C 35 380, 90 240, 230 200 C 330 170, 420 110, 560 130 C 660 145, 730 90, 860 85 C 950 82, 975 180, 955 310 C 940 420, 950 510, 830 535 C 710 560, 580 555, 470 510 C 350 470, 260 555, 130 545 Z"
                   fill="#fde68a" stroke="#2d231e" stroke-width="5"/>
 
-            <!-- World 1 & 2 Lush Green Mainland -->
             <path d="M 75 495 C 60 385, 110 260, 245 220 C 340 190, 430 140, 550 155 C 640 170, 620 330, 520 430 C 420 510, 250 535, 130 525 Z"
                   fill="url(#meadowGrad)" stroke="#2d231e" stroke-width="4"/>
 
-            <!-- World 2 Sunny Beach Cove Peninsula -->
             <path d="M 440 165 C 520 135, 635 160, 650 255 C 660 325, 580 355, 515 310 C 460 270, 410 210, 440 165 Z"
                   fill="#fef08a" stroke="#eab308" stroke-width="3"/>
 
-            <!-- World 3 Enchanted Whispering Woods Biome -->
             <path d="M 485 450 C 510 340, 620 275, 735 285 C 815 295, 825 460, 745 520 C 665 565, 510 545, 485 450 Z"
                   fill="url(#forestGrad)" stroke="#2d231e" stroke-width="4"/>
 
-            <!-- World 4 Snowy Mountain & Royal Peak Biome -->
             <path d="M 685 235 C 700 135, 790 95, 895 100 C 955 105, 955 285, 925 415 C 895 470, 800 440, 775 345 C 755 275, 680 285, 685 235 Z"
                   fill="url(#snowGrad)" stroke="#2d231e" stroke-width="4"/>
           </g>
 
           <!-- Decorative Landmarks -->
-          <!-- World 1 Cozy House & Red Barn -->
           <g transform="translate(65, 425)">
             <rect x="0" y="15" width="38" height="28" rx="4" fill="#fef3c7" stroke="#2d231e" stroke-width="3"/>
             <polygon points="-5,17 19,-5 43,17" fill="#ef4444" stroke="#2d231e" stroke-width="3"/>
@@ -193,21 +178,17 @@ window.LeviOverworld = (function () {
             <path d="M 13 24 L 31 42 M 31 24 L 13 42" stroke="#ffffff" stroke-width="2.5"/>
           </g>
 
-          <!-- Cute Trees & Pines -->
           <g stroke="#2d231e" stroke-width="2.8">
             <circle cx="165" cy="365" r="18" fill="#16a34a"/>
             <circle cx="152" cy="372" r="14" fill="#22c55e"/>
             <circle cx="305" cy="310" r="19" fill="#16a34a"/>
             <circle cx="420" cy="300" r="16" fill="#22c55e"/>
-            <!-- Whispering Woods Mushrooms & Pines -->
             <polygon points="600,435 616,395 632,435" fill="#4c1d95"/>
             <polygon points="785,465 802,420 819,465" fill="#5b21b6"/>
-            <!-- Snow Pines -->
             <polygon points="780,150 795,112 810,150" fill="#e2e8f0"/>
             <polygon points="815,190 830,155 845,190" fill="#f1f5f9"/>
           </g>
 
-          <!-- Pirate Ship / Palm Tree near World 2 -->
           <g transform="translate(625, 195)" stroke="#2d231e" stroke-width="2.5">
             <path d="M 10 35 Q 15 15 12 0" fill="none" stroke="#92400e" stroke-width="5"/>
             <path d="M 12 2 Q -5 -5 -12 8" fill="none" stroke="#16a34a" stroke-width="5"/>
@@ -215,7 +196,7 @@ window.LeviOverworld = (function () {
             <path d="M 12 2 Q 12 -14 26 -10" fill="none" stroke="#22c55e" stroke-width="5"/>
           </g>
 
-          <!-- King Levi's Grand Castle at Node 16 -->
+          <!-- Castle at Node 16 -->
           <g transform="translate(855, 42)" stroke="#2d231e" stroke-width="3">
             <rect x="12" y="34" width="56" height="44" fill="#f8fafc"/>
             <rect x="2" y="20" width="20" height="58" fill="#e2e8f0"/>
@@ -225,26 +206,6 @@ window.LeviOverworld = (function () {
             <polygon points="22,34 40,8 58,34" fill="#3b82f6"/>
             <path d="M 30 78 L 30 56 A 10 10 0 0 1 50 56 L 50 78 Z" fill="#b45309"/>
             <path d="M 40 8 L 40 -6 L 56 -1 L 40 4" fill="#facc15"/>
-          </g>
-
-          <!-- World Banners on Map -->
-          <g font-family="'Fredoka', 'Nunito', sans-serif" font-weight="800" font-size="14">
-            <g transform="translate(135, 575)">
-              <rect x="-85" y="-16" width="170" height="28" rx="14" fill="#15803d" stroke="#ffffff" stroke-width="2.5"/>
-              <text x="0" y="3" text-anchor="middle" fill="#ffffff">🏡 World 1: Meadow</text>
-            </g>
-            <g transform="translate(475, 108)">
-              <rect x="-85" y="-16" width="170" height="28" rx="14" fill="#0369a1" stroke="#ffffff" stroke-width="2.5"/>
-              <text x="0" y="3" text-anchor="middle" fill="#ffffff">🏖️ World 2: Coast</text>
-            </g>
-            <g transform="translate(645, 575)">
-              <rect x="-85" y="-16" width="170" height="28" rx="14" fill="#6d28d9" stroke="#ffffff" stroke-width="2.5"/>
-              <text x="0" y="3" text-anchor="middle" fill="#ffffff">🪄 World 3: Woods</text>
-            </g>
-            <g transform="translate(760, 62)">
-              <rect x="-95" y="-16" width="190" height="28" rx="14" fill="#c2410c" stroke="#ffffff" stroke-width="2.5"/>
-              <text x="0" y="3" text-anchor="middle" fill="#ffffff">🏰 World 4: Kingdom</text>
-            </g>
           </g>
 
           <!-- Winding Overworld Paths -->
@@ -261,7 +222,6 @@ window.LeviOverworld = (function () {
         }%; top: ${(startNode.mapY / 620) * 100}%;">
           <div class="levi-token-inner">
             ${leviSvg}
-            <div class="levi-token-name">LEVI</div>
           </div>
         </div>
       </div>
@@ -288,7 +248,6 @@ window.LeviOverworld = (function () {
       });
     });
 
-    // If we were asked to animate Levi walking from just-completed node to newly unlocked node
     if (animateFromNodeId && animateToNodeId && animateFromNodeId !== animateToNodeId) {
       setTimeout(() => {
         walkLeviToNode(animateToNodeId);
@@ -315,12 +274,15 @@ window.LeviOverworld = (function () {
     isWalking = true;
     tokenEl.classList.add('walking');
 
-    // Step along intermediate nodes if adjacent, or direct smooth hop
     const diff = Math.abs(targetNodeId - currentLeviNodeId);
     const stepIds = [];
     if (diff <= 3) {
       const dir = targetNodeId > currentLeviNodeId ? 1 : -1;
-      for (let id = currentLeviNodeId + dir; dir > 0 ? id <= targetNodeId : id >= targetNodeId; id += dir) {
+      for (
+        let id = currentLeviNodeId + dir;
+        dir > 0 ? id <= targetNodeId : id >= targetNodeId;
+        id += dir
+      ) {
         stepIds.push(id);
       }
     } else {

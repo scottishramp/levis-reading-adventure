@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Levi's Reading Adventure — Storybook Sticker & Paper-Craft Stylesheet
+   Levi's Reading Adventure — Clean, Distraction-Free Storybook Stylesheet
    Mobile-first, tablet & desktop friendly, zero-scroll touch drag support
    ========================================================================== */
 
@@ -45,7 +45,7 @@ body {
 }
 
 /* ==========================================================================
-   App Shell & Top Header Bar
+   App Shell & Overworld Header Bar
    ========================================================================== */
 
 .app-shell {
@@ -101,18 +101,6 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
-  flex-wrap: wrap;
-}
-
-.star-pill {
-  background: var(--cream);
-  border: 3px solid var(--ink);
-  border-radius: 999px;
-  padding: 4px 12px;
-  font-weight: 800;
-  font-size: clamp(0.82rem, 1.8vw, 1rem);
-  box-shadow: 0 2px 0 var(--ink);
-  white-space: nowrap;
 }
 
 /* ==========================================================================
@@ -122,24 +110,25 @@ body {
 .btn-game {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: clamp(0.82rem, 1.8vw, 1rem);
-  padding: 6px 13px;
-  border-radius: 14px;
-  border: 3px solid var(--ink);
+  font-size: clamp(0.95rem, 2vw, 1.15rem);
+  padding: 8px 16px;
+  border-radius: 16px;
+  border: 3.5px solid var(--ink);
   background: var(--cream);
   color: var(--ink);
   cursor: pointer;
-  box-shadow: 0 3px 0 var(--ink);
+  box-shadow: 0 4px 0 var(--ink);
   transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.15s;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
   white-space: nowrap;
 }
 
 .btn-game:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 0 var(--ink);
+  box-shadow: 0 5px 0 var(--ink);
 }
 
 .btn-game:active {
@@ -155,17 +144,15 @@ body {
   background: #4ade80;
 }
 
-.btn-secondary {
-  background: #7dd3fc;
-}
-
-.btn-gold {
-  background: #fde047;
+.btn-next-level {
+  font-size: clamp(1.3rem, 3vw, 1.75rem);
+  padding: 12px 32px;
+  border-radius: 20px;
 }
 
 .btn-icon {
-  padding: 6px 10px;
-  font-size: 1.1rem;
+  padding: 7px 11px;
+  font-size: 1.25rem;
 }
 
 /* ==========================================================================
@@ -188,7 +175,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 8px;
+  padding: 10px;
   overflow: hidden;
 }
 
@@ -245,7 +232,7 @@ body {
 
 .overworld-levi-token {
   position: absolute;
-  width: 7.2%;
+  width: 7.5%;
   aspect-ratio: 1 / 1;
   transform: translate(-50%, -82%);
   pointer-events: none;
@@ -263,21 +250,6 @@ body {
 
 .overworld-levi-token.walking .levi-token-inner {
   animation: leviWalkHop 0.28s infinite ease-in-out;
-}
-
-.levi-token-name {
-  position: absolute;
-  top: -14px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #ef4444;
-  color: #ffffff;
-  font-size: clamp(9px, 1.1vw, 12px);
-  font-weight: 800;
-  padding: 1px 6px;
-  border-radius: 8px;
-  border: 2px solid var(--ink);
-  letter-spacing: 0.05em;
 }
 
 @keyframes leviIdleBob {
@@ -300,22 +272,6 @@ body {
   }
 }
 
-.overworld-footer-hint {
-  position: absolute;
-  bottom: 14px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(255, 253, 245, 0.95);
-  border: 3px solid var(--ink);
-  border-radius: 999px;
-  padding: 6px 18px;
-  font-weight: 700;
-  font-size: clamp(0.82rem, 1.8vw, 1rem);
-  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.22);
-  pointer-events: none;
-  white-space: nowrap;
-}
-
 /* ==========================================================================
    Puzzle Scene Screen & Reading Banner
    ========================================================================== */
@@ -329,26 +285,34 @@ body {
 }
 
 .sentence-banner-wrap {
-  padding: 10px 14px 6px;
+  padding: 12px 14px 8px;
   background: rgba(255, 255, 255, 0.22);
   display: flex;
+  align-items: center;
   justify-content: center;
+  gap: 12px;
   z-index: 20;
   flex-shrink: 0;
 }
 
+.scene-nav-btn {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+}
+
 .sentence-card {
-  width: 100%;
-  max-width: 920px;
+  flex: 1;
+  max-width: 860px;
   background: var(--cream);
   border: 4px solid var(--ink);
   border-radius: 22px;
-  padding: 10px 18px;
+  padding: 12px 20px;
   box-shadow: 0 6px 0 rgba(45, 35, 30, 0.25);
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 3px;
+  justify-content: center;
   transition: transform 0.25s ease, background-color 0.25s ease, box-shadow 0.25s ease;
 }
 
@@ -359,31 +323,20 @@ body {
   transform: scale(1.02);
 }
 
-.sentence-level-meta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  font-size: 0.82rem;
-  font-weight: 700;
-  color: #64748b;
-}
-
 .sentence-text-container {
   font-family: var(--font-reading);
-  font-size: clamp(1.35rem, 3.6vw, 2.3rem);
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
   font-weight: 900;
   color: var(--ink);
   text-align: center;
-  line-height: 1.32;
+  line-height: 1.3;
   letter-spacing: 0.015em;
-  padding: 2px 4px;
 }
 
 .sentence-word {
   display: inline-block;
   padding: 2px 6px;
-  margin: 0 1px;
+  margin: 0 2px;
   border-radius: 10px;
   cursor: pointer;
   transition: transform 0.14s ease, background-color 0.14s ease, color 0.14s ease;
@@ -430,10 +383,10 @@ body {
   justify-content: space-between;
   position: relative;
   overflow: hidden;
-  padding: 6px 12px 12px;
+  padding: 6px 12px 14px;
 }
 
-/* Default & 16 Scene Theme Backdrops (Wall top 64%, Floor bottom 36%) */
+/* 16 Scene Theme Backdrops (Wall top 64%, Floor bottom 36%) */
 .scene-stage.theme-living_room {
   background: linear-gradient(180deg, #bae6fd 0%, #e0f2fe 63%, #92400e 63%, #b45309 65%, #d97706 100%);
 }
@@ -493,7 +446,7 @@ body {
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  gap: clamp(8px, 2vw, 22px);
+  gap: clamp(10px, 2.2vw, 26px);
   max-width: 1100px;
   width: 100%;
   margin: 0 auto;
@@ -502,8 +455,8 @@ body {
 
 .scene-target-card {
   position: relative;
-  width: clamp(92px, 16vw, 152px);
-  height: clamp(92px, 21vh, 156px);
+  width: clamp(96px, 17vw, 160px);
+  height: clamp(96px, 23vh, 164px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -561,11 +514,10 @@ body {
 .target-svg {
   width: 100%;
   height: 100%;
-  max-height: 140px;
+  max-height: 148px;
   overflow: visible;
 }
 
-/* Placed item sitting on top of a target */
 .target-placed-layer {
   position: absolute;
   inset: 0;
@@ -592,7 +544,6 @@ body {
   }
 }
 
-/* Mini preview icon on beach mounds or garden sprouts */
 .target-preview-badge {
   position: absolute;
   bottom: 6px;
@@ -607,26 +558,12 @@ body {
   box-shadow: 0 2px 0 rgba(0, 0, 0, 0.2);
 }
 
-.feed-counter-pill {
-  position: absolute;
-  top: -8px;
-  background: #fde047;
-  color: var(--ink);
-  border: 2.5px solid var(--ink);
-  border-radius: 999px;
-  padding: 2px 10px;
-  font-size: 0.85rem;
-  font-weight: 800;
-  z-index: 8;
-  box-shadow: 0 2px 0 var(--ink);
-}
-
 /* ==========================================================================
    Draggable Floor Items Zone (Lower Floor Area)
    ========================================================================== */
 
 .scene-items-zone {
-  min-height: clamp(86px, 21vh, 132px);
+  min-height: clamp(88px, 22vh, 136px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -644,8 +581,8 @@ body {
 
 .scene-item-sticker {
   position: relative;
-  width: clamp(68px, 12vw, 102px);
-  height: clamp(68px, 14vh, 102px);
+  width: clamp(70px, 12.5vw, 106px);
+  height: clamp(70px, 14.5vh, 106px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -655,27 +592,19 @@ body {
   transition: transform 0.15s ease, filter 0.15s ease;
 }
 
+/* Consumed items stay in the layout to leave an empty gap so neighbors never move! */
+.scene-item-sticker.item-consumed {
+  visibility: hidden;
+  pointer-events: none;
+}
+
 .scene-item-sticker:hover {
   transform: translateY(-4px) scale(1.06);
 }
 
 .scene-item-sticker.selected-sticker {
-  transform: translateY(-8px) scale(1.12);
-  filter: drop-shadow(0 0 8px #fde047);
-}
-
-.scene-item-sticker.selected-sticker::after {
-  content: 'Tap where it goes!';
-  position: absolute;
-  top: -22px;
-  background: #fde047;
-  color: var(--ink);
-  border: 2px solid var(--ink);
-  border-radius: 8px;
-  padding: 1px 6px;
-  font-size: 0.68rem;
-  font-weight: 800;
-  white-space: nowrap;
+  transform: translateY(-8px) scale(1.14);
+  filter: drop-shadow(0 0 10px #fde047);
 }
 
 .scene-item-sticker.dragging-source {
@@ -711,7 +640,6 @@ body {
   overflow: visible;
 }
 
-/* Floating Drag Ghost */
 .dragging-ghost {
   position: fixed;
   pointer-events: none;
@@ -721,26 +649,8 @@ body {
   transition: none !important;
 }
 
-/* Optional Object Name Labels (OFF by default to test pure reading comprehension) */
-.object-name-label {
-  display: none;
-  background: rgba(255, 253, 245, 0.94);
-  color: var(--ink);
-  border: 2px solid var(--ink);
-  border-radius: 8px;
-  padding: 1px 6px;
-  font-size: 0.72rem;
-  font-weight: 800;
-  margin-top: 2px;
-  white-space: nowrap;
-}
-
-.scene-stage.show-object-labels .object-name-label {
-  display: block;
-}
-
 /* ==========================================================================
-   Error Shake & Floating Feedback Bubbles
+   Error Shake
    ========================================================================== */
 
 .shake-error {
@@ -763,61 +673,16 @@ body {
   }
 }
 
-.floating-feedback-bubble {
-  position: absolute;
-  top: -18px;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 4px 12px;
-  border-radius: 999px;
-  border: 2.5px solid var(--ink);
-  font-size: 0.82rem;
-  font-weight: 800;
-  white-space: nowrap;
-  z-index: 30;
-  pointer-events: none;
-  animation: floatUpFade 1.45s ease forwards;
-}
-
-.bubble-good {
-  background: #bbf7d0;
-  color: #14532d;
-}
-
-.bubble-oops {
-  background: #fecaca;
-  color: #7f1d1d;
-}
-
-@keyframes floatUpFade {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, 8px) scale(0.85);
-  }
-  18% {
-    opacity: 1;
-    transform: translate(-50%, -4px) scale(1.04);
-  }
-  80% {
-    opacity: 1;
-    transform: translate(-50%, -14px) scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: translate(-50%, -22px) scale(0.95);
-  }
-}
-
 /* ==========================================================================
-   Victory Overlay & Confetti
+   Victory Overlay (Stars + Level N Button Only) & Confetti
    ========================================================================== */
 
 .victory-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(15, 23, 42, 0.42);
+  background: rgba(15, 23, 42, 0.38);
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
   padding: 16px;
   z-index: 45;
@@ -837,9 +702,11 @@ body {
   background: var(--cream);
   border: 5px solid var(--ink);
   border-radius: 28px;
-  padding: 16px 22px;
-  max-width: 680px;
-  width: 100%;
+  padding: 24px 36px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
   text-align: center;
   box-shadow: 0 12px 0 rgba(0, 0, 0, 0.28);
   animation: popUpCard 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -847,7 +714,7 @@ body {
 
 @keyframes popUpCard {
   from {
-    transform: translateY(40px) scale(0.9);
+    transform: translateY(30px) scale(0.9);
   }
   to {
     transform: translateY(0) scale(1);
@@ -855,31 +722,14 @@ body {
 }
 
 .victory-stars-row {
-  font-size: 2rem;
+  font-size: clamp(2.4rem, 6vw, 3.4rem);
   line-height: 1;
-  margin-bottom: 4px;
-}
-
-.victory-heading {
-  margin: 0 0 4px;
-  font-size: clamp(1.25rem, 3vw, 1.75rem);
-  color: #15803d;
-}
-
-.victory-subtext {
-  margin: 0 0 14px;
-  font-family: var(--font-reading);
-  font-size: clamp(1.05rem, 2.4vw, 1.35rem);
-  font-weight: 800;
-  color: var(--ink);
 }
 
 .victory-buttons-row {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  flex-wrap: wrap;
 }
 
 .confetti-layer {
@@ -927,6 +777,14 @@ body {
     height: 32px;
     font-size: 16px;
   }
+  .sentence-banner-wrap {
+    padding: 8px 8px 4px;
+    gap: 8px;
+  }
+  .scene-nav-btn {
+    width: 42px;
+    height: 42px;
+  }
   .sentence-card {
     padding: 8px 12px;
     border-radius: 16px;
@@ -938,9 +796,5 @@ body {
   .scene-item-sticker {
     width: clamp(62px, 19vw, 84px);
     height: clamp(62px, 11vh, 84px);
-  }
-  .overworld-footer-hint {
-    font-size: 0.78rem;
-    padding: 4px 12px;
   }
 }

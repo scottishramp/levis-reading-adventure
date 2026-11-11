@@ -115,28 +115,27 @@
     chair(state) {
       const isHappy = !!state.happy;
       return wrap(
-        shadow(70, 126, 44, 7) +
-        // Wooden legs
-        `<line x1="38" y1="96" x2="34" y2="124" stroke="#8d5b2e" stroke-width="5" stroke-linecap="round"/>` +
-        `<line x1="52" y1="96" x2="50" y2="120" stroke="#6d4c41" stroke-width="4" stroke-linecap="round"/>` +
-        `<line x1="88" y1="96" x2="90" y2="120" stroke="#6d4c41" stroke-width="4" stroke-linecap="round"/>` +
-        `<line x1="102" y1="96" x2="106" y2="124" stroke="#8d5b2e" stroke-width="5" stroke-linecap="round"/>` +
-        // Apron
-        `<rect x="34" y="90" width="72" height="10" rx="3" fill="#a1622e" ${S}/>` +
-        // High arched backrest
-        `<path d="M 40 82 C 40 32 100 32 100 82 Z" fill="#26a69a" ${S}/>` +
-        `<circle cx="70" cy="50" r="3" fill="#004d40"/>` +
-        `<circle cx="56" cy="60" r="3" fill="#004d40"/>` +
-        `<circle cx="84" cy="60" r="3" fill="#004d40"/>` +
-        // Plush teal cushion
-        `<rect x="30" y="74" width="80" height="22" rx="10" fill="#4db6ac" ${S}/>` +
-        `<path d="M 36 78 Q 70 74 104 78" fill="none" stroke="#80cbc4" stroke-width="3" stroke-linecap="round"/>` +
-        // Armrests
-        `<path d="M 28 84 Q 24 64 38 64 Q 44 76 44 84" fill="#a1622e" ${S}/>` +
-        `<path d="M 112 84 Q 116 64 102 64 Q 96 76 96 84" fill="#a1622e" ${S}/>` +
-        // Coral pillow
-        `<rect x="68" y="70" width="22" height="20" rx="6" fill="#ef5350" transform="rotate(-10 79 80)" ${TS}/>` +
-        (isHappy ? heart(70, 24, 1.2, '#ef5350') + sparkle(96, 32, 5) : '')
+        shadow(70, 127, 34, 6) +
+        // Back legs & tall vertical backrest posts
+        `<rect x="44" y="22" width="8" height="98" rx="3" fill="#8b5a2b" ${S}/>` +
+        `<rect x="88" y="22" width="8" height="98" rx="3" fill="#8b5a2b" ${S}/>` +
+        // Classic horizontal wooden backrest slats
+        `<rect x="48" y="28" width="44" height="11" rx="3" fill="#b47b44" ${S}/>` +
+        `<rect x="48" y="45" width="44" height="9" rx="2.5" fill="#b47b44" ${S}/>` +
+        // Vertical spindles between slats and seat
+        `<rect x="59" y="54" width="5" height="24" fill="#9c6634" ${TS}/>` +
+        `<rect x="76" y="54" width="5" height="24" fill="#9c6634" ${TS}/>` +
+        // Side/back leg stretcher bar
+        `<rect x="46" y="98" width="48" height="5" rx="2" fill="#6e4720" ${TS}/>` +
+        // Flat classic wooden seat (trapezoid perspective)
+        `<polygon points="42,76 98,76 106,88 34,88" fill="#d29556" ${S}/>` +
+        `<rect x="34" y="86" width="72" height="7" rx="2" fill="#a86e34" ${S}/>` +
+        // Front legs
+        `<rect x="38" y="92" width="8" height="34" rx="3" fill="#a86e34" ${S}/>` +
+        `<rect x="94" y="92" width="8" height="34" rx="3" fill="#a86e34" ${S}/>` +
+        // Front stretcher bar
+        `<rect x="44" y="108" width="52" height="5" rx="2" fill="#8b5a2b" ${TS}/>` +
+        (isHappy ? heart(70, 16, 1.2, '#ef5350') + sparkle(104, 30, 5) : '')
       );
     },
 

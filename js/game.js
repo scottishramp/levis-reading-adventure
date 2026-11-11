@@ -1,7 +1,6 @@
 /**
  * Levi's Reading Adventure - Core Scene & Puzzle Engine
- * Handles mobile/tablet/desktop drag-and-drop + tap-to-place, multi-step puzzles,
- * progress persistence, confetti celebrations, and synchronized Web Speech read-aloud.
+ * Clean, distraction-free reading comprehension experience for a 6-year-old.
  */
 
 window.LeviGame = (function () {
@@ -13,9 +12,8 @@ window.LeviGame = (function () {
     highestUnlocked: 1,
     completed: {}, // { [levelId]: true }
     stars: {}, // { [levelId]: number }
-    playCounts: {}, // { [levelId]: number } - used to cycle starter sentences then randomize
-    unlockAll: false,
-    showLabels: false
+    playCounts: {}, // { [levelId]: number }
+    unlockAll: false
   };
 
   let activePuzzle = null;
@@ -77,40 +75,27 @@ window.LeviGame = (function () {
       });
     }
 
-    const btnNewSentence = document.getElementById('btn-new-sentence');
-    if (btnNewSentence) {
-      btnNewSentence.addEventListener('click', () => {
-        if (window.LeviAudio) {
-          window.LeviAudio.stopSpeech();
-          window.LeviAudio.playPop();
+    const syncMuteButtons = (isMuted) => {
+      ['btn-mute', 'btn-scene-mute'].forEach((id) => {
+        const b = document.getElementById(id);
+        if (b) {
+          b.textContent = isMuted ? '🔇' : '🔊';
+          b.setAttribute('aria-label', isMuted ? 'Unmute sound' : 'Mute sound');
         }
-        startLevel(state.currentLevelId, true);
       });
-    }
+    };
 
-    const btnLabels = document.getElementById('btn-toggle-labels');
-    if (btnLabels) {
-      btnLabels.addEventListener('click', () => {
-        state.showLabels = !state.showLabels;
-        btnLabels.classList.toggle('active', state.showLabels);
-        btnLabels.textContent = state.showLabels ? '🔤 Labels: ON' : '🔤 Labels: OFF';
-        const sceneStage = document.getElementById('scene-stage');
-        if (sceneStage) {
-          sceneStage.classList.toggle('show-object-labels', state.showLabels);
-        }
-      });
-    }
-
-    const btnMute = document.getElementById('btn-mute');
-    if (btnMute) {
-      btnMute.addEventListener('click', () => {
-        if (window.LeviAudio) {
-          const isMuted = window.LeviAudio.toggleMute();
-          btnMute.textContent = isMuted ? '🔇' : '🔊';
-          btnMute.setAttribute('aria-label', isMuted ? 'Unmute sound' : 'Mute sound');
-        }
-      });
-    }
+    ['btn-mute', 'btn-scene-mute'].forEach((id) => {
+      const btn = document.getElementById(id);
+      if (btn) {
+        btn.addEventListener('click', () => {
+          if (window.LeviAudio) {
+            const isMuted = window.LeviAudio.toggleMute();
+            syncMuteButtons(isMuted);
+          }
+        });
+      }
+    });
 
     const btnUnlockAll = document.getElementById('btn-unlock-all');
     if (btnUnlockAll) {
@@ -127,27 +112,18 @@ window.LeviGame = (function () {
   }
 
   function updateUnlockAllButton(btn) {
-    btn.textContent = state.unlockAll ? '🔓 All Levels Open' : '🔒 Normal Progression';
+    btn.textContent = state.unlockAll ? '🔓' : '🔒';
     btn.classList.toggle('active', state.unlockAll);
-  }
-
-  function updateStarCounter() {
-    const totalStars = Object.values(state.stars).reduce((acc, n) => acc + n, 0);
-    const completedCount = Object.keys(state.completed).length;
-    const starEl = document.getElementById('header-star-count');
-    if (starEl) {
-      starEl.textContent = `⭐ ${totalStars}  •  🏆 ${completedCount}/16`;
-    }
   }
 
   function showOverworld(animateFromId, animateToId) {
     state.screen = 'overworld';
+    const topHeader = document.getElementById('top-header');
+    if (topHeader) topHeader.classList.remove('hidden');
+
     document.getElementById('screen-overworld').classList.remove('hidden');
     document.getElementById('screen-scene').classList.add('hidden');
-    document.getElementById('scene-controls-bar').classList.add('hidden');
-    document.getElementById('overworld-controls-bar').classList.remove('hidden');
 
-    updateStarCounter();
     window.LeviOverworld.render(state, animateFromId, animateToId);
   }
 
@@ -159,12 +135,12 @@ window.LeviGame = (function () {
     state.currentLevelId = levelId;
     window.LeviOverworld.setLeviNode(levelId);
 
+    const topHeader = document.getElementById('top-header');
+    if (topHeader) topHeader.classList.add('hidden');
+
     document.getElementById('screen-overworld').classList.add('hidden');
     document.getElementById('screen-scene').classList.remove('hidden');
-    document.getElementById('scene-controls-bar').classList.remove('hidden');
-    document.getElementById('overworld-controls-bar').classList.add('hidden');
 
-    // Use starter combo on first plays so classic examples appear first, then full randomization
     const playIdx = state.playCounts[levelId] || 0;
     state.playCounts[levelId] = playIdx + 1;
     saveProgress();
@@ -175,7 +151,7 @@ window.LeviGame = (function () {
     puzzleProgress = {
       completed: false,
       fedCount: 0,
-      targetStates: {}, // { [targetId]: { open, lit, happy, bloomed, placedItems: [] } }
+      targetStates: {},
       lightTurnedOn: false,
       animalFed: false,
       pilotPlaced: false,
@@ -194,31 +170,19 @@ window.LeviGame = (function () {
     });
 
     selectedItemUid = null;
-    updateStarCounter();
     renderScene(levelDef);
   }
 
   function renderScene(levelDef) {
-    // Level title pill
-    const titleEl = document.getElementById('scene-level-title');
-    if (titleEl) {
-      titleEl.textContent = `${levelDef.icon} Level ${levelDef.id}: ${levelDef.title}`;
-    }
-
-    // Render Sentence Banner with interactive words
     renderSentenceBanner(activePuzzle.sentence);
 
-    // Hide victory overlay
     const victoryModal = document.getElementById('victory-overlay');
     if (victoryModal) {
       victoryModal.classList.add('hidden');
     }
 
-    // Render Stage Targets & Floor Items
     const stageEl = document.getElementById('scene-stage');
-    stageEl.className = `scene-stage theme-${levelDef.theme} ${
-      state.showLabels ? 'show-object-labels' : ''
-    }`;
+    stageEl.className = `scene-stage theme-${levelDef.theme}`;
 
     updateSceneDOM();
   }
@@ -232,18 +196,14 @@ window.LeviGame = (function () {
 
     const words = sentenceText.split(/\s+/);
     bannerEl.innerHTML = words
-      .map(
-        (word, idx) =>
-          `<span class="sentence-word" data-word-idx="${idx}" title="Tap word to sound it out">${word}</span>`
-      )
+      .map((word, idx) => `<span class="sentence-word" data-word-idx="${idx}">${word}</span>`)
       .join(' ');
 
-    // Allow tapping a single word to hear just that word if Levi wants a phonetic helper
+    // Allow tapping a single word to sound it out
     bannerEl.querySelectorAll('.sentence-word').forEach((wordEl) => {
       wordEl.addEventListener('click', (e) => {
         e.stopPropagation();
         if (puzzleProgress.completed) {
-          // If already completed, re-read the whole sentence!
           speakCurrentSentenceAloud();
           return;
         }
@@ -263,7 +223,7 @@ window.LeviGame = (function () {
     const itemsZone = document.getElementById('scene-items-zone');
     if (!targetsZone || !itemsZone) return;
 
-    // Render Targets
+    // Render Targets (Pure visual illustrations—no text labels)
     targetsZone.innerHTML = activePuzzle.targets
       .map((target) => {
         const tState = puzzleProgress.targetStates[target.id] || {};
@@ -272,7 +232,6 @@ window.LeviGame = (function () {
           ? window.LeviTargetSprites.get(spriteKey, tState)
           : '';
 
-        // Placed items on this target
         const placedMarkup = (tState.placedItems || [])
           .map((itemObj) => {
             const itemSvg = window.LeviItemSprites ? window.LeviItemSprites.get(itemObj.id) : '';
@@ -280,17 +239,7 @@ window.LeviGame = (function () {
           })
           .join('');
 
-        // Feed counter pill if this is the target animal in a 'feed' level
-        let counterBadge = '';
-        if (
-          activePuzzle.type === 'feed' &&
-          target.id === activePuzzle.targetAnimal &&
-          puzzleProgress.fedCount > 0
-        ) {
-          counterBadge = `<div class="feed-counter-pill">${puzzleProgress.fedCount} / ${activePuzzle.requiredCount} ⭐</div>`;
-        }
-
-        // Badge item preview on beach mounds or garden sprouts
+        // Preview badge on beach mounds or garden sprouts
         let previewBadge = '';
         if (target.badgeItem) {
           const miniSvg = window.LeviItemSprites ? window.LeviItemSprites.get(target.badgeItem) : '';
@@ -300,7 +249,6 @@ window.LeviGame = (function () {
           previewBadge = `<div class="target-preview-badge sprout-sign">${miniSvg}</div>`;
         }
 
-        // Tap prompt indicator for interactive containers, lights, buttons
         const isTappable =
           (target.role === 'container' && !tState.open) ||
           (target.role === 'light' && !tState.lit) ||
@@ -314,41 +262,37 @@ window.LeviGame = (function () {
                role="button"
                tabindex="0"
                aria-label="${target.label}">
-            ${counterBadge}
             <div class="target-art-wrap">
               ${svgMarkup}
               ${previewBadge}
               <div class="target-placed-layer">${placedMarkup}</div>
             </div>
-            <div class="object-name-label">${target.label}</div>
           </div>
         `;
       })
       .join('');
 
-    // Render Draggable Floor Items
-    const availableItems = puzzleProgress.DynamicItems.filter((it) => !it.consumed);
-    itemsZone.innerHTML = availableItems
-      .map((item) => {
-        const svgMarkup = window.LeviItemSprites ? window.LeviItemSprites.get(item.id) : '';
-        const isSelected = selectedItemUid === item.uid;
-        return `
-          <div class="scene-item-sticker ${isSelected ? 'selected-sticker' : ''} ${
-          item.freshlySpawned ? 'spawn-pop' : ''
-        }"
-               data-item-uid="${item.uid}"
-               data-item-id="${item.id}"
-               role="button"
-               tabindex="0"
-               aria-label="${item.label}">
-            <div class="item-art-wrap">${svgMarkup}</div>
-            <div class="object-name-label">${item.label}</div>
-          </div>
-        `;
-      })
-      .join('');
+    // Render Floor Items — keep consumed items in place with .item-consumed so remaining items never shift!
+    itemsZone.innerHTML = puzzleProgress.DynamicItems.map((item) => {
+      if (item.consumed) {
+        return `<div class="scene-item-sticker item-consumed" aria-hidden="true"></div>`;
+      }
+      const svgMarkup = window.LeviItemSprites ? window.LeviItemSprites.get(item.id) : '';
+      const isSelected = selectedItemUid === item.uid;
+      return `
+        <div class="scene-item-sticker ${isSelected ? 'selected-sticker' : ''} ${
+        item.freshlySpawned ? 'spawn-pop' : ''
+      }"
+             data-item-uid="${item.uid}"
+             data-item-id="${item.id}"
+             role="button"
+             tabindex="0"
+             aria-label="${item.label}">
+          <div class="item-art-wrap">${svgMarkup}</div>
+        </div>
+      `;
+    }).join('');
 
-    // Clear freshlySpawned flag after render
     puzzleProgress.DynamicItems.forEach((it) => {
       it.freshlySpawned = false;
     });
@@ -360,13 +304,11 @@ window.LeviGame = (function () {
     const targetsZone = document.getElementById('scene-targets-zone');
     const itemsZone = document.getElementById('scene-items-zone');
 
-    // Target click / tap handlers (for opening jars/boxes, switching lights/buttons, or tap-to-place)
     targetsZone.querySelectorAll('.scene-target-card').forEach((targetEl) => {
-      targetEl.addEventListener('click', (e) => {
+      targetEl.addEventListener('click', () => {
         if (puzzleProgress.completed) return;
         const targetId = targetEl.getAttribute('data-target-id');
 
-        // If an item is currently selected via tap, try applying it to this target!
         if (selectedItemUid) {
           const itemObj = puzzleProgress.DynamicItems.find((i) => i.uid === selectedItemUid);
           if (itemObj && !itemObj.consumed) {
@@ -375,20 +317,18 @@ window.LeviGame = (function () {
           }
         }
 
-        // Otherwise handle direct tap on container / light / button
         handleDirectTargetTap(targetId, targetEl);
       });
     });
 
-    // Pointer Drag & Tap-Select on Floor Items
-    itemsZone.querySelectorAll('.scene-item-sticker').forEach((itemEl) => {
+    itemsZone.querySelectorAll('.scene-item-sticker:not(.item-consumed)').forEach((itemEl) => {
       itemEl.addEventListener('pointerdown', onItemPointerDown);
     });
   }
 
   function onItemPointerDown(e) {
     if (puzzleProgress.completed) return;
-    if (e.button !== undefined && e.button !== 0) return; // left click or touch only
+    if (e.button !== undefined && e.button !== 0) return;
     e.preventDefault();
 
     const itemEl = e.currentTarget;
@@ -402,7 +342,6 @@ window.LeviGame = (function () {
     const startX = e.clientX;
     const startY = e.clientY;
 
-    // Create floating drag clone for smooth 60fps mobile & desktop dragging
     const ghost = itemEl.cloneNode(true);
     ghost.classList.add('dragging-ghost');
     ghost.style.width = `${rect.width}px`;
@@ -446,7 +385,6 @@ window.LeviGame = (function () {
     dragState.ghostEl.style.left = `${x}px`;
     dragState.ghostEl.style.top = `${y}px`;
 
-    // Hit-test target cards underneath pointer
     const hitTarget = findTargetCardAtPoint(e.clientX, e.clientY);
     if (dragState.hoveredTargetEl && dragState.hoveredTargetEl !== hitTarget) {
       dragState.hoveredTargetEl.classList.remove('drop-hover');
@@ -481,7 +419,6 @@ window.LeviGame = (function () {
       const targetId = dropTarget.getAttribute('data-target-id');
       attemptItemOnTarget(itemObj, targetId, dropTarget);
     } else if (!moved) {
-      // Tap-to-select toggle for easy two-tap mobile play!
       selectedItemUid = selectedItemUid === uid ? null : uid;
       updateSceneDOM();
     } else {
@@ -493,7 +430,6 @@ window.LeviGame = (function () {
     const cards = document.querySelectorAll('.scene-target-card');
     for (let i = 0; i < cards.length; i++) {
       const r = cards[i].getBoundingClientRect();
-      // Slightly generous hitbox (+10px) for 6-year-old fingers
       if (
         clientX >= r.left - 10 &&
         clientX <= r.right + 10 &&
@@ -520,25 +456,16 @@ window.LeviGame = (function () {
         setTimeout(() => window.LeviAudio.playClink(), 90);
       }
 
-      // Spawn the key/tool inside this container onto the floor tray!
       const spawnedId = targetDef.keyId;
-      const itemLabel =
-        spawnedId === 'shovel'
-          ? `shovel (${targetDef.label})`
-          : spawnedId === 'wand'
-          ? `wand (${targetDef.label})`
-          : `key (${targetDef.label})`;
-
       puzzleProgress.DynamicItems.push({
         uid: `spawned_${targetId}_${Date.now()}`,
         id: spawnedId,
         fromContainer: targetId,
-        label: itemLabel,
+        label: spawnedId,
         consumed: false,
         freshlySpawned: true
       });
 
-      showFloatingFeedback(targetEl, 'Pop! ✨', 'good');
       updateSceneDOM();
       return;
     }
@@ -553,12 +480,11 @@ window.LeviGame = (function () {
             window.LeviAudio.playSwitch();
             window.LeviAudio.playStepSuccess();
           }
-          showFloatingFeedback(targetEl, 'Click! 💡', 'good');
           updateSceneDOM();
           checkCompoundCompletion();
         }
       } else {
-        triggerGentleRejection(targetEl, 'Check which light!');
+        triggerGentleRejection(targetEl);
       }
       return;
     }
@@ -567,7 +493,7 @@ window.LeviGame = (function () {
     if (targetDef.role === 'button') {
       if (targetId === activePuzzle.targetButton) {
         if (!puzzleProgress.pilotPlaced) {
-          triggerGentleRejection(targetEl, 'Put the pilot in first!');
+          triggerGentleRejection(targetEl);
           return;
         }
         tState.lit = true;
@@ -575,11 +501,10 @@ window.LeviGame = (function () {
         if (window.LeviAudio) {
           window.LeviAudio.playSwitch();
         }
-        showFloatingFeedback(targetEl, 'Blast off! 🚀', 'good');
         updateSceneDOM();
         checkCompoundCompletion();
       } else {
-        triggerGentleRejection(targetEl, 'Check the button color!');
+        triggerGentleRejection(targetEl);
       }
     }
   }
@@ -600,7 +525,7 @@ window.LeviGame = (function () {
         updateSceneDOM();
         triggerPuzzleComplete();
       } else {
-        triggerGentleRejection(targetEl, 'Read carefully! 📖');
+        triggerGentleRejection(targetEl);
       }
       return;
     }
@@ -613,18 +538,13 @@ window.LeviGame = (function () {
         puzzleProgress.fedCount += 1;
         tState.happy = true;
         if (window.LeviAudio) window.LeviAudio.playMunch();
-        showFloatingFeedback(
-          targetEl,
-          `Yum! ${puzzleProgress.fedCount}/${activePuzzle.requiredCount}`,
-          'good'
-        );
         updateSceneDOM();
 
         if (puzzleProgress.fedCount >= activePuzzle.requiredCount) {
           triggerPuzzleComplete();
         }
       } else {
-        triggerGentleRejection(targetEl, 'Hmm, check who & what to feed!');
+        triggerGentleRejection(targetEl);
       }
       return;
     }
@@ -640,16 +560,15 @@ window.LeviGame = (function () {
         tState.open = true;
         tState.happy = true;
         if (window.LeviAudio) window.LeviAudio.playUnlock();
-        showFloatingFeedback(targetEl, 'Unlocked! 🔓', 'good');
         updateSceneDOM();
         triggerPuzzleComplete();
       } else {
-        triggerGentleRejection(targetEl, 'Check which jar & which door!');
+        triggerGentleRejection(targetEl);
       }
       return;
     }
 
-    // ARCHETYPE 4: PIRATE DIG ("Use the shovel under the palm tree to dig up the gold chest.")
+    // ARCHETYPE 4: PIRATE DIG
     if (pType === 'dig') {
       const targetDef = activePuzzle.targets.find((t) => t.id === targetId);
       if (
@@ -662,16 +581,15 @@ window.LeviGame = (function () {
         tState.open = true;
         tState.placedItems.push({ id: activePuzzle.targetTreasure });
         if (window.LeviAudio) window.LeviAudio.playUnlock();
-        showFloatingFeedback(targetEl, 'Found it! ✨', 'good');
         updateSceneDOM();
         triggerPuzzleComplete();
       } else {
-        triggerGentleRejection(targetEl, 'Check which shovel & treasure!');
+        triggerGentleRejection(targetEl);
       }
       return;
     }
 
-    // ARCHETYPE 5: WIZARD WAKE ("Use the wand in the star box to wake up the baby dragon.")
+    // ARCHETYPE 5: WIZARD WAKE
     if (pType === 'wake') {
       if (
         itemObj.fromContainer === activePuzzle.targetContainer &&
@@ -682,18 +600,16 @@ window.LeviGame = (function () {
         tState.happy = true;
         tState.open = true;
         if (window.LeviAudio) window.LeviAudio.playUnlock();
-        showFloatingFeedback(targetEl, 'Awake! 🪄', 'good');
         updateSceneDOM();
         triggerPuzzleComplete();
       } else {
-        triggerGentleRejection(targetEl, 'Check which box & creature!');
+        triggerGentleRejection(targetEl);
       }
       return;
     }
 
-    // ARCHETYPE 6: GARDEN ("Use the blue watering can to grow the sunflower, then put it in the basket.")
+    // ARCHETYPE 6: GARDEN
     if (pType === 'garden') {
-      // Step 1: Watering the sprout
       if (
         itemObj.id === activePuzzle.targetCan &&
         targetId === activePuzzle.targetSprout &&
@@ -707,7 +623,6 @@ window.LeviGame = (function () {
           window.LeviAudio.playSplash();
           window.LeviAudio.playStepSuccess();
         }
-        // Spawn the bloomed flower/pumpkin onto the item tray!
         const plantId = activePuzzle.targetPlant;
         puzzleProgress.DynamicItems.push({
           uid: `bloomed_${plantId}_${Date.now()}`,
@@ -716,12 +631,10 @@ window.LeviGame = (function () {
           consumed: false,
           freshlySpawned: true
         });
-        showFloatingFeedback(targetEl, 'It grew! 🌱', 'good');
         updateSceneDOM();
         return;
       }
 
-      // Step 2: Putting the grown plant into the holder
       if (itemObj.id === activePuzzle.targetPlant && targetId === activePuzzle.targetHolder) {
         itemObj.consumed = true;
         selectedItemUid = null;
@@ -733,11 +646,11 @@ window.LeviGame = (function () {
         return;
       }
 
-      triggerGentleRejection(targetEl, 'Read both steps carefully!');
+      triggerGentleRejection(targetEl);
       return;
     }
 
-    // ARCHETYPE 7: CAMPFIRE ("Turn on the yellow flashlight and give the marshmallow to the fox.")
+    // ARCHETYPE 7: CAMPFIRE
     if (pType === 'campfire') {
       if (itemObj.id === activePuzzle.targetSnack && targetId === activePuzzle.targetAnimal) {
         itemObj.consumed = true;
@@ -749,20 +662,15 @@ window.LeviGame = (function () {
           window.LeviAudio.playMunch();
           window.LeviAudio.playStepSuccess();
         }
-        showFloatingFeedback(
-          targetEl,
-          puzzleProgress.lightTurnedOn ? 'Yum! ✨' : 'Yum! Now the light!',
-          'good'
-        );
         updateSceneDOM();
         checkCompoundCompletion();
       } else {
-        triggerGentleRejection(targetEl, 'Check the snack & animal!');
+        triggerGentleRejection(targetEl);
       }
       return;
     }
 
-    // ARCHETYPE 8: SPACE ("Put the astronaut in the silver rocket and press the green button.")
+    // ARCHETYPE 8: SPACE
     if (pType === 'space') {
       if (itemObj.id === activePuzzle.targetPilot && targetId === activePuzzle.targetShip) {
         itemObj.consumed = true;
@@ -774,18 +682,16 @@ window.LeviGame = (function () {
           window.LeviAudio.playPop();
           window.LeviAudio.playStepSuccess();
         }
-        showFloatingFeedback(targetEl, 'Aboard! Now press the button!', 'good');
         updateSceneDOM();
         checkCompoundCompletion();
       } else {
-        triggerGentleRejection(targetEl, 'Check which pilot & ship!');
+        triggerGentleRejection(targetEl);
       }
       return;
     }
 
-    // ARCHETYPE 9: CASTLE FINALE ("Use the key under the royal pillow to open the treasure chest, then give the diamond to the dragon.")
+    // ARCHETYPE 9: CASTLE FINALE
     if (pType === 'castle_finale') {
-      // Step 2: Key unlocks lock and spawns gem
       if (
         itemObj.fromContainer === activePuzzle.targetContainer &&
         targetId === activePuzzle.targetLock &&
@@ -806,12 +712,10 @@ window.LeviGame = (function () {
           consumed: false,
           freshlySpawned: true
         });
-        showFloatingFeedback(targetEl, 'Opened! 💎', 'good');
         updateSceneDOM();
         return;
       }
 
-      // Step 3: Give gem to hero
       if (itemObj.id === activePuzzle.targetGem && targetId === activePuzzle.targetHero) {
         itemObj.consumed = true;
         selectedItemUid = null;
@@ -823,7 +727,7 @@ window.LeviGame = (function () {
         return;
       }
 
-      triggerGentleRejection(targetEl, 'Check each step in the sentence!');
+      triggerGentleRejection(targetEl);
     }
   }
 
@@ -839,25 +743,13 @@ window.LeviGame = (function () {
     }
   }
 
-  function triggerGentleRejection(targetEl, hintText) {
+  function triggerGentleRejection(targetEl) {
     if (window.LeviAudio) window.LeviAudio.playError();
     if (targetEl) {
       targetEl.classList.remove('shake-error');
       void targetEl.offsetWidth;
       targetEl.classList.add('shake-error');
-      showFloatingFeedback(targetEl, hintText || 'Try again! 🤔', 'oops');
     }
-  }
-
-  function showFloatingFeedback(anchorEl, text, mood) {
-    if (!anchorEl) return;
-    const bubble = document.createElement('div');
-    bubble.className = `floating-feedback-bubble ${mood === 'oops' ? 'bubble-oops' : 'bubble-good'}`;
-    bubble.textContent = text;
-    anchorEl.appendChild(bubble);
-    setTimeout(() => {
-      if (bubble.parentNode) bubble.parentNode.removeChild(bubble);
-    }, 1500);
   }
 
   /**
@@ -875,7 +767,6 @@ window.LeviGame = (function () {
       state.highestUnlocked = lvlId + 1;
     }
     saveProgress();
-    updateStarCounter();
 
     if (window.LeviAudio) {
       window.LeviAudio.playVictoryFanfare();
@@ -887,12 +778,10 @@ window.LeviGame = (function () {
       cardEl.classList.add('sentence-completed-reading');
     }
 
-    // Read the completed sentence aloud after a short beat so the fanfare starts cleanly
     setTimeout(() => {
       speakCurrentSentenceAloud(() => {
         showVictoryOverlay();
       });
-      // Also reveal the victory controls shortly after speech starts so Levi doesn't have to wait if he's fast
       setTimeout(() => {
         showVictoryOverlay();
       }, 1200);
@@ -932,6 +821,9 @@ window.LeviGame = (function () {
     });
   }
 
+  /**
+   * Minimal completion screen: just stars and a "Level N" button!
+   */
   function showVictoryOverlay() {
     const victoryModal = document.getElementById('victory-overlay');
     if (!victoryModal || !victoryModal.classList.contains('hidden')) return;
@@ -942,36 +834,14 @@ window.LeviGame = (function () {
     victoryModal.innerHTML = `
       <div class="victory-banner-card">
         <div class="victory-stars-row">⭐ 🌟 ⭐</div>
-        <h2 class="victory-heading">${
-          isFinalLevel ? 'You Beat the Castle Finale, Levi!' : 'Awesome Reading, Levi!'
-        }</h2>
-        <p class="victory-subtext">"${activePuzzle.sentence}"</p>
         <div class="victory-buttons-row">
-          <button type="button" class="btn-game btn-gold" id="btn-victory-hear">
-            🔊 Read Aloud Again
-          </button>
-          <button type="button" class="btn-game btn-secondary" id="btn-victory-another">
-            🎲 New Sentence Here
-          </button>
-          <button type="button" class="btn-game btn-primary" id="btn-victory-next">
-            🗺️ ${isFinalLevel ? 'Back to Overworld' : `Onward to Level ${nextLevelId} ➔`}
+          <button type="button" class="btn-game btn-primary btn-next-level" id="btn-victory-next">
+            ${isFinalLevel ? '🗺️' : `Level ${nextLevelId} ➔`}
           </button>
         </div>
       </div>
     `;
     victoryModal.classList.remove('hidden');
-
-    document.getElementById('btn-victory-hear').addEventListener('click', () => {
-      speakCurrentSentenceAloud();
-    });
-
-    document.getElementById('btn-victory-another').addEventListener('click', () => {
-      if (window.LeviAudio) {
-        window.LeviAudio.stopSpeech();
-        window.LeviAudio.playPop();
-      }
-      startLevel(state.currentLevelId, true);
-    });
 
     document.getElementById('btn-victory-next').addEventListener('click', () => {
       if (window.LeviAudio) {
