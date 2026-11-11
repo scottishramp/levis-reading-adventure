@@ -1,0 +1,946 @@
+/* ==========================================================================
+   Levi's Reading Adventure — Storybook Sticker & Paper-Craft Stylesheet
+   Mobile-first, tablet & desktop friendly, zero-scroll touch drag support
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@700;800;900&display=swap');
+
+:root {
+  --ink: #2d231e;
+  --cream: #fffdf5;
+  --parchment: #fef3c7;
+  --gold: #facc15;
+  --gold-deep: #ca8a04;
+  --green: #22c55e;
+  --green-deep: #15803d;
+  --blue: #0ea5e9;
+  --blue-deep: #0369a1;
+  --orange: #f97316;
+  --orange-deep: #c2410c;
+  --font-display: 'Fredoka', 'Nunito', 'Comic Sans MS', sans-serif;
+  --font-reading: 'Nunito', 'Fredoka', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  font-family: var(--font-display);
+  background: #0284c7;
+  color: var(--ink);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* ==========================================================================
+   App Shell & Top Header Bar
+   ========================================================================== */
+
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.top-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 14px;
+  background: linear-gradient(180deg, #fef08a 0%, #fde047 100%);
+  border-bottom: 4px solid var(--ink);
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.16);
+  z-index: 30;
+  flex-shrink: 0;
+}
+
+.brand-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-logo-badge {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #ef4444;
+  border: 3px solid var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  box-shadow: 0 2px 0 var(--ink);
+}
+
+.brand-title {
+  margin: 0;
+  font-size: clamp(1.05rem, 2.5vw, 1.5rem);
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: 0.01em;
+  line-height: 1.1;
+}
+
+.header-controls-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.star-pill {
+  background: var(--cream);
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-weight: 800;
+  font-size: clamp(0.82rem, 1.8vw, 1rem);
+  box-shadow: 0 2px 0 var(--ink);
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   Buttons
+   ========================================================================== */
+
+.btn-game {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(0.82rem, 1.8vw, 1rem);
+  padding: 6px 13px;
+  border-radius: 14px;
+  border: 3px solid var(--ink);
+  background: var(--cream);
+  color: var(--ink);
+  cursor: pointer;
+  box-shadow: 0 3px 0 var(--ink);
+  transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.btn-game:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 0 var(--ink);
+}
+
+.btn-game:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 var(--ink);
+}
+
+.btn-game.active {
+  background: #bbf7d0;
+}
+
+.btn-primary {
+  background: #4ade80;
+}
+
+.btn-secondary {
+  background: #7dd3fc;
+}
+
+.btn-gold {
+  background: #fde047;
+}
+
+.btn-icon {
+  padding: 6px 10px;
+  font-size: 1.1rem;
+}
+
+/* ==========================================================================
+   Mario-Style Overworld Map Screen
+   ========================================================================== */
+
+.screen-overworld {
+  flex: 1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: radial-gradient(circle at center, #38bdf8 0%, #0284c7 100%);
+}
+
+.overworld-container {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  overflow: hidden;
+}
+
+.overworld-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 1120px;
+  aspect-ratio: 1000 / 620;
+  max-height: 100%;
+  border: 5px solid var(--ink);
+  border-radius: 26px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  background: #0ea5e9;
+}
+
+.overworld-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.map-node.unlocked {
+  cursor: pointer;
+  transition: transform 0.18s ease;
+}
+
+.map-node.unlocked:hover {
+  filter: brightness(1.08);
+}
+
+.map-node.locked {
+  opacity: 0.72;
+  cursor: not-allowed;
+}
+
+.map-node-pulse {
+  animation: pulseRing 1.4s infinite ease-in-out;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+@keyframes pulseRing {
+  0%,
+  100% {
+    transform: scale(0.95);
+    opacity: 0.95;
+  }
+  50% {
+    transform: scale(1.18);
+    opacity: 0.35;
+  }
+}
+
+.overworld-levi-token {
+  position: absolute;
+  width: 7.2%;
+  aspect-ratio: 1 / 1;
+  transform: translate(-50%, -82%);
+  pointer-events: none;
+  transition: left 0.32s linear, top 0.32s linear;
+  z-index: 15;
+}
+
+.levi-token-inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  animation: leviIdleBob 1.8s infinite ease-in-out;
+  filter: drop-shadow(0 5px 4px rgba(0, 0, 0, 0.38));
+}
+
+.overworld-levi-token.walking .levi-token-inner {
+  animation: leviWalkHop 0.28s infinite ease-in-out;
+}
+
+.levi-token-name {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #ef4444;
+  color: #ffffff;
+  font-size: clamp(9px, 1.1vw, 12px);
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 8px;
+  border: 2px solid var(--ink);
+  letter-spacing: 0.05em;
+}
+
+@keyframes leviIdleBob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes leviWalkHop {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-5deg);
+  }
+  50% {
+    transform: translateY(-14px) rotate(5deg);
+  }
+}
+
+.overworld-footer-hint {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 253, 245, 0.95);
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  padding: 6px 18px;
+  font-weight: 700;
+  font-size: clamp(0.82rem, 1.8vw, 1rem);
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.22);
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   Puzzle Scene Screen & Reading Banner
+   ========================================================================== */
+
+.screen-scene {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+.sentence-banner-wrap {
+  padding: 10px 14px 6px;
+  background: rgba(255, 255, 255, 0.22);
+  display: flex;
+  justify-content: center;
+  z-index: 20;
+  flex-shrink: 0;
+}
+
+.sentence-card {
+  width: 100%;
+  max-width: 920px;
+  background: var(--cream);
+  border: 4px solid var(--ink);
+  border-radius: 22px;
+  padding: 10px 18px;
+  box-shadow: 0 6px 0 rgba(45, 35, 30, 0.25);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  transition: transform 0.25s ease, background-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.sentence-card.sentence-completed-reading {
+  background: #fef9c3;
+  border-color: #ca8a04;
+  box-shadow: 0 0 0 5px rgba(250, 204, 21, 0.45), 0 8px 18px rgba(0, 0, 0, 0.22);
+  transform: scale(1.02);
+}
+
+.sentence-level-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #64748b;
+}
+
+.sentence-text-container {
+  font-family: var(--font-reading);
+  font-size: clamp(1.35rem, 3.6vw, 2.3rem);
+  font-weight: 900;
+  color: var(--ink);
+  text-align: center;
+  line-height: 1.32;
+  letter-spacing: 0.015em;
+  padding: 2px 4px;
+}
+
+.sentence-word {
+  display: inline-block;
+  padding: 2px 6px;
+  margin: 0 1px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.14s ease, background-color 0.14s ease, color 0.14s ease;
+}
+
+.sentence-word:hover {
+  background: #fef08a;
+}
+
+.sentence-word.word-tap-bounce {
+  animation: wordTapBounce 0.38s ease;
+  background: #fde047;
+}
+
+.sentence-word.word-speaking {
+  background: #facc15;
+  color: #1e293b;
+  transform: scale(1.14) translateY(-2px);
+  box-shadow: 0 3px 0 var(--ink);
+}
+
+.sentence-word.word-spoken {
+  color: #15803d;
+}
+
+@keyframes wordTapBounce {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  45% {
+    transform: scale(1.18) translateY(-4px);
+  }
+}
+
+/* ==========================================================================
+   Interactive Scene Stage & Room Backdrops
+   ========================================================================== */
+
+.scene-stage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+  padding: 6px 12px 12px;
+}
+
+/* Default & 16 Scene Theme Backdrops (Wall top 64%, Floor bottom 36%) */
+.scene-stage.theme-living_room {
+  background: linear-gradient(180deg, #bae6fd 0%, #e0f2fe 63%, #92400e 63%, #b45309 65%, #d97706 100%);
+}
+.scene-stage.theme-barn {
+  background: linear-gradient(180deg, #fecaca 0%, #fca5a5 63%, #78350f 63%, #d97706 65%, #f59e0b 100%);
+}
+.scene-stage.theme-hallway {
+  background: linear-gradient(180deg, #ddd6fe 0%, #c4b5fd 63%, #4c1d95 63%, #6d28d9 65%, #5b21b6 100%);
+}
+.scene-stage.theme-bedroom {
+  background: linear-gradient(180deg, #fbcfe8 0%, #fce7f3 63%, #831843 63%, #be185d 65%, #db2777 100%);
+}
+.scene-stage.theme-kitchen {
+  background: linear-gradient(180deg, #fef08a 0%, #fef9c3 63%, #0f766e 63%, #14b8a6 65%, #2dd4bf 100%);
+}
+.scene-stage.theme-jungle {
+  background: linear-gradient(180deg, #86efac 0%, #4ade80 63%, #15803d 63%, #16a34a 65%, #22c55e 100%);
+}
+.scene-stage.theme-beach {
+  background: linear-gradient(180deg, #7dd3fc 0%, #38bdf8 55%, #0ea5e9 63%, #fde047 63%, #facc15 100%);
+}
+.scene-stage.theme-party {
+  background: linear-gradient(180deg, #f5d0fe 0%, #fae8ff 63%, #701a75 63%, #a21caf 65%, #c026d3 100%);
+}
+.scene-stage.theme-wizard {
+  background: linear-gradient(180deg, #312e81 0%, #4338ca 63%, #1e1b4b 63%, #3730a3 65%, #312e81 100%);
+}
+.scene-stage.theme-picnic {
+  background: linear-gradient(180deg, #bae6fd 0%, #dcfce7 63%, #15803d 63%, #22c55e 65%, #4ade80 100%);
+}
+.scene-stage.theme-garden {
+  background: linear-gradient(180deg, #7dd3fc 0%, #bae6fd 63%, #3f6212 63%, #65a30d 65%, #84cc16 100%);
+}
+.scene-stage.theme-campfire {
+  background: linear-gradient(180deg, #0f172a 0%, #1e293b 63%, #14532d 63%, #166534 65%, #15803d 100%);
+}
+.scene-stage.theme-snow {
+  background: linear-gradient(180deg, #93c5fd 0%, #dbeafe 63%, #cbd5e1 63%, #f1f5f9 65%, #ffffff 100%);
+}
+.scene-stage.theme-garage {
+  background: linear-gradient(180deg, #fed7aa 0%, #ffedd5 63%, #334155 63%, #475569 65%, #64748b 100%);
+}
+.scene-stage.theme-space {
+  background: linear-gradient(180deg, #090d16 0%, #1e1b4b 63%, #334155 63%, #475569 65%, #64748b 100%);
+}
+.scene-stage.theme-castle {
+  background: linear-gradient(180deg, #fef08a 0%, #fde68a 63%, #991b1b 63%, #dc2626 65%, #b91c1c 100%);
+}
+
+/* ==========================================================================
+   Targets Zone (Upper/Middle Room Area)
+   ========================================================================== */
+
+.scene-targets-zone {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: clamp(8px, 2vw, 22px);
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto;
+  z-index: 5;
+}
+
+.scene-target-card {
+  position: relative;
+  width: clamp(92px, 16vw, 152px);
+  height: clamp(92px, 21vh, 156px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+  padding: 4px;
+  transition: transform 0.16s ease, filter 0.16s ease, background-color 0.16s ease;
+  cursor: pointer;
+}
+
+.scene-target-card.tappable-target {
+  animation: gentlePromptPulse 2s infinite ease-in-out;
+}
+
+@keyframes gentlePromptPulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.04);
+  }
+}
+
+.scene-target-card.drop-hover {
+  transform: scale(1.12);
+  background: rgba(255, 255, 255, 0.45);
+  box-shadow: 0 0 0 4px #fde047;
+}
+
+.scene-target-card.target-happy {
+  animation: happyTargetJump 0.55s ease;
+}
+
+@keyframes happyTargetJump {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  40% {
+    transform: translateY(-14px) scale(1.08);
+  }
+}
+
+.target-art-wrap {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 6px 5px rgba(0, 0, 0, 0.26));
+}
+
+.target-svg {
+  width: 100%;
+  height: 100%;
+  max-height: 140px;
+  overflow: visible;
+}
+
+/* Placed item sitting on top of a target */
+.target-placed-layer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.placed-item-sticker {
+  width: 58%;
+  height: 58%;
+  transform: translateY(-8%);
+  filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.3));
+  animation: placedPopIn 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes placedPopIn {
+  0% {
+    transform: scale(0.3) translateY(-20%);
+  }
+  100% {
+    transform: scale(1) translateY(-8%);
+  }
+}
+
+/* Mini preview icon on beach mounds or garden sprouts */
+.target-preview-badge {
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  width: 38px;
+  height: 38px;
+  background: rgba(255, 253, 245, 0.92);
+  border: 2.5px solid var(--ink);
+  border-radius: 50%;
+  padding: 3px;
+  pointer-events: none;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.2);
+}
+
+.feed-counter-pill {
+  position: absolute;
+  top: -8px;
+  background: #fde047;
+  color: var(--ink);
+  border: 2.5px solid var(--ink);
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  z-index: 8;
+  box-shadow: 0 2px 0 var(--ink);
+}
+
+/* ==========================================================================
+   Draggable Floor Items Zone (Lower Floor Area)
+   ========================================================================== */
+
+.scene-items-zone {
+  min-height: clamp(86px, 21vh, 132px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: clamp(10px, 2.2vw, 22px);
+  padding: 8px 14px;
+  background: rgba(255, 253, 245, 0.25);
+  border: 3px dashed rgba(255, 255, 255, 0.45);
+  border-radius: 24px;
+  max-width: 1020px;
+  width: 100%;
+  margin: 0 auto;
+  z-index: 10;
+}
+
+.scene-item-sticker {
+  position: relative;
+  width: clamp(68px, 12vw, 102px);
+  height: clamp(68px, 14vh, 102px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  touch-action: none;
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.scene-item-sticker:hover {
+  transform: translateY(-4px) scale(1.06);
+}
+
+.scene-item-sticker.selected-sticker {
+  transform: translateY(-8px) scale(1.12);
+  filter: drop-shadow(0 0 8px #fde047);
+}
+
+.scene-item-sticker.selected-sticker::after {
+  content: 'Tap where it goes!';
+  position: absolute;
+  top: -22px;
+  background: #fde047;
+  color: var(--ink);
+  border: 2px solid var(--ink);
+  border-radius: 8px;
+  padding: 1px 6px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.scene-item-sticker.dragging-source {
+  opacity: 0.3;
+  transform: scale(0.9);
+}
+
+.scene-item-sticker.spawn-pop {
+  animation: spawnPopAnim 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes spawnPopAnim {
+  0% {
+    transform: scale(0) translateY(-40px);
+  }
+  100% {
+    transform: scale(1) translateY(0);
+  }
+}
+
+.item-art-wrap {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 5px 4px rgba(0, 0, 0, 0.28));
+}
+
+.item-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* Floating Drag Ghost */
+.dragging-ghost {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  transform: scale(1.18) rotate(-4deg);
+  filter: drop-shadow(0 14px 12px rgba(0, 0, 0, 0.38));
+  transition: none !important;
+}
+
+/* Optional Object Name Labels (OFF by default to test pure reading comprehension) */
+.object-name-label {
+  display: none;
+  background: rgba(255, 253, 245, 0.94);
+  color: var(--ink);
+  border: 2px solid var(--ink);
+  border-radius: 8px;
+  padding: 1px 6px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  margin-top: 2px;
+  white-space: nowrap;
+}
+
+.scene-stage.show-object-labels .object-name-label {
+  display: block;
+}
+
+/* ==========================================================================
+   Error Shake & Floating Feedback Bubbles
+   ========================================================================== */
+
+.shake-error {
+  animation: gentleErrorWobble 0.45s ease;
+}
+
+@keyframes gentleErrorWobble {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-8px) rotate(-3deg);
+  }
+  50% {
+    transform: translateX(8px) rotate(3deg);
+  }
+  75% {
+    transform: translateX(-5px) rotate(-2deg);
+  }
+}
+
+.floating-feedback-bubble {
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 2.5px solid var(--ink);
+  font-size: 0.82rem;
+  font-weight: 800;
+  white-space: nowrap;
+  z-index: 30;
+  pointer-events: none;
+  animation: floatUpFade 1.45s ease forwards;
+}
+
+.bubble-good {
+  background: #bbf7d0;
+  color: #14532d;
+}
+
+.bubble-oops {
+  background: #fecaca;
+  color: #7f1d1d;
+}
+
+@keyframes floatUpFade {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 8px) scale(0.85);
+  }
+  18% {
+    opacity: 1;
+    transform: translate(-50%, -4px) scale(1.04);
+  }
+  80% {
+    opacity: 1;
+    transform: translate(-50%, -14px) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -22px) scale(0.95);
+  }
+}
+
+/* ==========================================================================
+   Victory Overlay & Confetti
+   ========================================================================== */
+
+.victory-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.42);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 16px;
+  z-index: 45;
+  animation: fadeInOverlay 0.25s ease;
+}
+
+@keyframes fadeInOverlay {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.victory-banner-card {
+  background: var(--cream);
+  border: 5px solid var(--ink);
+  border-radius: 28px;
+  padding: 16px 22px;
+  max-width: 680px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 12px 0 rgba(0, 0, 0, 0.28);
+  animation: popUpCard 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes popUpCard {
+  from {
+    transform: translateY(40px) scale(0.9);
+  }
+  to {
+    transform: translateY(0) scale(1);
+  }
+}
+
+.victory-stars-row {
+  font-size: 2rem;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.victory-heading {
+  margin: 0 0 4px;
+  font-size: clamp(1.25rem, 3vw, 1.75rem);
+  color: #15803d;
+}
+
+.victory-subtext {
+  margin: 0 0 14px;
+  font-family: var(--font-reading);
+  font-size: clamp(1.05rem, 2.4vw, 1.35rem);
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.victory-buttons-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.confetti-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 40;
+}
+
+.confetti-piece {
+  position: absolute;
+  top: 52%;
+  width: 12px;
+  height: 16px;
+  border-radius: 3px;
+  border: 1.5px solid var(--ink);
+  animation: confettiBurst 1.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes confettiBurst {
+  0% {
+    transform: translate(0, 0) rotate(0deg) scale(1);
+    opacity: 1;
+  }
+  65% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--dx), calc(var(--dy) + 260px)) rotate(var(--rot)) scale(0.8);
+    opacity: 0;
+  }
+}
+
+/* ==========================================================================
+   Mobile Portrait & Small Screen Tweaks
+   ========================================================================== */
+
+@media (max-width: 640px) {
+  .top-header {
+    padding: 6px 10px;
+  }
+  .brand-logo-badge {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+  .sentence-card {
+    padding: 8px 12px;
+    border-radius: 16px;
+  }
+  .scene-target-card {
+    width: clamp(82px, 27vw, 118px);
+    height: clamp(82px, 16vh, 118px);
+  }
+  .scene-item-sticker {
+    width: clamp(62px, 19vw, 84px);
+    height: clamp(62px, 11vh, 84px);
+  }
+  .overworld-footer-hint {
+    font-size: 0.78rem;
+    padding: 4px 12px;
+  }
+}

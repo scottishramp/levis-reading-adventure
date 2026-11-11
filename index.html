@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="theme-color" content="#fde047" />
+  <title>Levi's Reading Adventure</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Top Storybook Header Bar -->
+    <header class="top-header">
+      <div class="brand-group">
+        <div class="brand-logo-badge" aria-hidden="true">📖</div>
+        <h1 class="brand-title">Levi's Reading Adventure</h1>
+      </div>
+
+      <div class="header-controls-group">
+        <div id="header-star-count" class="star-pill" title="Stars & Completed Levels">
+          ⭐ 0 • 🏆 0/16
+        </div>
+
+        <!-- Overworld-specific controls -->
+        <div id="overworld-controls-bar" class="header-controls-group">
+          <button type="button" id="btn-unlock-all" class="btn-game" title="Toggle unlocking all 16 map levels">
+            🔒 Normal Progression
+          </button>
+        </div>
+
+        <!-- Scene-specific controls -->
+        <div id="scene-controls-bar" class="header-controls-group hidden">
+          <button type="button" id="btn-back-map" class="btn-game btn-secondary">
+            🗺️ World Map
+          </button>
+          <button type="button" id="btn-new-sentence" class="btn-game btn-gold" title="Generate a new randomized sentence in this room">
+            🎲 New Sentence
+          </button>
+          <button type="button" id="btn-toggle-labels" class="btn-game" title="Optional helper labels under objects">
+            🔤 Labels: OFF
+          </button>
+        </div>
+
+        <button type="button" id="btn-mute" class="btn-game btn-icon" aria-label="Mute sound" title="Mute / Unmute Sound">
+          🔊
+        </button>
+      </div>
+    </header>
+
+    <!-- SCREEN 1: Mario-Style Overworld Map -->
+    <main id="screen-overworld" class="screen-overworld">
+      <div id="overworld-container" class="overworld-container"></div>
+      <div class="overworld-footer-hint">
+        👆 Tap a glowing level circle to start Levi's next reading puzzle!
+      </div>
+    </main>
+
+    <!-- SCREEN 2: Interactive Puzzle Scene -->
+    <main id="screen-scene" class="screen-scene hidden">
+      <!-- Reading Prompt Scroll -->
+      <section class="sentence-banner-wrap" aria-label="Reading Puzzle Sentence">
+        <div id="sentence-card" class="sentence-card">
+          <div class="sentence-level-meta">
+            <span id="scene-level-title">🍌 Level 1: Fruit & Furniture Room</span>
+            <span>Read the sentence & do the action! (Tap a word for help)</span>
+          </div>
+          <div id="sentence-text-container" class="sentence-text-container">
+            Put the banana on the chair.
+          </div>
+        </div>
+      </section>
+
+      <!-- Visual Room / Scene Stage -->
+      <section id="scene-stage" class="scene-stage theme-living_room">
+        <!-- Upper/Middle Area: Furniture, Animals, Doors, Jars, Containers -->
+        <div id="scene-targets-zone" class="scene-targets-zone"></div>
+
+        <!-- Lower Floor Area: Draggable Fruits, Foods, Keys, Tools, Toys -->
+        <div id="scene-items-zone" class="scene-items-zone"></div>
+
+        <!-- Celebration Confetti Layer -->
+        <div id="confetti-layer" class="confetti-layer"></div>
+
+        <!-- Post-Completion Victory & Read-Aloud Modal -->
+        <div id="victory-overlay" class="victory-overlay hidden"></div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Game Scripts (Vanilla JS attaching to window.* so it works via HTTP or direct file://) -->
+  <script src="js/audio.js"></script>
+  <script src="js/sprites-items.js"></script>
+  <script src="js/sprites-targets.js"></script>
+  <script src="js/levels.js"></script>
+  <script src="js/overworld.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>
