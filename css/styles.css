@@ -103,6 +103,25 @@ body {
   gap: 8px;
 }
 
+.island-tabs-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-island-tab {
+  padding: 6px 12px;
+  font-size: clamp(0.85rem, 1.8vw, 1.05rem);
+  border-radius: 14px;
+  background: #fffdf5;
+}
+
+.btn-island-tab.active {
+  background: #4ade80;
+  transform: translateY(-1px);
+  box-shadow: 0 5px 0 var(--ink);
+}
+
 /* ==========================================================================
    Buttons
    ========================================================================== */
@@ -775,12 +794,33 @@ body {
 
 @media (max-width: 640px), (max-height: 700px) {
   .top-header {
-    padding: 6px 10px;
+    padding: 6px 8px;
+    flex-wrap: wrap;
+    gap: 6px;
   }
   .brand-logo-badge {
-    width: 32px;
-    height: 32px;
-    font-size: 16px;
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+  }
+  .brand-title {
+    font-size: 0.92rem;
+  }
+  .island-tabs-group {
+    gap: 4px;
+  }
+  .btn-island-tab {
+    padding: 4px 8px;
+    font-size: 0.8rem;
+    border-radius: 11px;
+    border-width: 2.5px;
+    box-shadow: 0 3px 0 var(--ink);
+  }
+  .btn-icon {
+    padding: 4px 8px;
+    font-size: 1rem;
+    border-width: 2.5px;
+    box-shadow: 0 3px 0 var(--ink);
   }
   .sentence-banner-wrap {
     padding: 6px 8px 4px;

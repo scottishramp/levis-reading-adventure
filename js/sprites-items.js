@@ -26,24 +26,34 @@
         // =========================================================================
 
         banana: `
-            <!-- Banana -->
-            <!-- Main peel body -->
-            <path d="M 68 20 C 72 20, 75 23, 71 29 C 62 48, 48 70, 26 77 C 22 78, 19 75, 21 70 C 27 54, 44 32, 65 21 Z"
-                  fill="#fed330" stroke="#2d231e" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/>
-            <!-- Lower peel shaded facet -->
-            <path d="M 26 77 C 48 70, 62 48, 71 29 C 68 37, 58 56, 38 71 C 32 75, 26 77, 26 77 Z"
-                  fill="#f7b731"/>
-            <!-- Inner curve ridge -->
-            <path d="M 65 24 C 52 42, 38 58, 24 72"
-                  fill="none" stroke="#f39c12" stroke-width="2.5" stroke-linecap="round"/>
-            <!-- Stem at top -->
-            <path d="M 67 21 L 74 15 C 75 14, 78 15, 77 17 L 72 25 Z"
-                  fill="#6F4E37" stroke="#2d231e" stroke-width="3" stroke-linejoin="round"/>
-            <!-- Brown blossom tip at bottom -->
-            <ellipse cx="23" cy="73.5" rx="3" ry="2.5" fill="#4a3525"/>
-            <!-- Glossy white highlight arc -->
-            <path d="M 60 27 C 46 40, 36 54, 29 65"
-                  fill="none" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" opacity="0.65"/>
+            <!-- Classic Crescent Curved Banana -->
+            <!-- Main curved banana body (deep concave top, full rounded convex belly) -->
+            <path d="M 74 20
+                     C 79 22, 84 36, 78 56
+                     C 71 78, 46 88, 20 74
+                     C 14 71, 14 63, 21 62
+                     C 41 64, 58 54, 65 34
+                     C 68 25, 70 19, 74 20 Z"
+                  fill="#ffe135" stroke="#2d231e" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/>
+            <!-- Lower shaded facet along outer belly -->
+            <path d="M 20 74
+                     C 46 88, 71 78, 78 56
+                     C 82 42, 80 30, 76 23
+                     C 76 38, 69 57, 52 68
+                     C 39 76, 27 76, 20 74 Z"
+                  fill="#f6b93b"/>
+            <!-- Characteristic peel ridge line -->
+            <path d="M 72 26 C 67 48, 50 68, 22 69"
+                  fill="none" stroke="#e58e26" stroke-width="2.5" stroke-linecap="round"/>
+            <!-- Woody stem at top right -->
+            <path d="M 70 21 L 75 11 C 77 9, 82 11, 80 15 L 76 24 Z"
+                  fill="#78472a" stroke="#2d231e" stroke-width="3" stroke-linejoin="round"/>
+            <!-- Dark brown tip at bottom left -->
+            <path d="M 20 62 C 15 62, 13 67, 18 72 L 22 69 Z"
+                  fill="#4a3525" stroke="#2d231e" stroke-width="2.5" stroke-linejoin="round"/>
+            <!-- Glossy white highlight along inner curve -->
+            <path d="M 65 36 C 58 53, 44 63, 28 64"
+                  fill="none" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" opacity="0.72"/>
         `,
 
         apple: `
@@ -237,24 +247,47 @@
             <circle cx="38" cy="35" r="2.5" fill="#ffffff" opacity="0.75"/>
         `,
 
+        lemon: `
+            <!-- Bright Yellow Citrus Lemon with Leaf -->
+            <!-- Stem & Leaf -->
+            <path d="M 26 42 C 22 30, 32 20, 46 24 C 38 34, 30 38, 26 42 Z"
+                  fill="#2ed573" stroke="#2d231e" stroke-width="3.2" stroke-linejoin="round"/>
+            <path d="M 28 39 C 33 33, 38 29, 43 26"
+                  fill="none" stroke="#1e90ff" stroke-width="1.5" opacity="0.3"/>
+            <!-- Main lemon body with classic pointed tips at both ends -->
+            <path d="M 14 54
+                     C 18 48, 22 44, 26 41
+                     C 36 31, 64 31, 74 41
+                     C 78 44, 82 48, 86 54
+                     C 82 60, 78 64, 74 67
+                     C 64 77, 36 77, 26 67
+                     C 22 64, 18 60, 14 54 Z"
+                  fill="#fff200" stroke="#2d231e" stroke-width="3.5" stroke-linejoin="round"/>
+            <!-- Lower warm golden shading -->
+            <path d="M 18 56
+                     C 30 73, 70 73, 82 56
+                     C 78 62, 74 66, 70 68
+                     C 58 75, 42 75, 30 68
+                     C 26 66, 22 62, 18 56 Z"
+                  fill="#f7b731" opacity="0.65"/>
+            <!-- Citrus pores / dimples -->
+            <circle cx="58" cy="62" r="1.6" fill="#e58e26"/>
+            <circle cx="65" cy="57" r="1.5" fill="#e58e26"/>
+            <circle cx="50" cy="65" r="1.5" fill="#e58e26"/>
+            <circle cx="69" cy="51" r="1.4" fill="#e58e26"/>
+            <!-- Glossy white highlight arc -->
+            <path d="M 32 43 C 42 36, 58 36, 68 42"
+                  fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" opacity="0.75"/>
+        `,
+
         melon: `
-            <!-- Cantaloupe / Honeydew Melon Wedge -->
-            <!-- Outer ribbed rind -->
-            <path d="M 20 68 C 30 79, 48 85, 62 83 C 76 81, 84 73, 86 65"
-                  fill="none" stroke="#95afc0" stroke-width="12" stroke-linecap="round"/>
-            <!-- Greenish sub-rind layer -->
-            <path d="M 22 67 C 32 77, 48 83, 62 81 C 74 79, 82 72, 84 65"
-                  fill="none" stroke="#badc58" stroke-width="6" stroke-linecap="round"/>
-            <!-- Cantaloupe juicy orange flesh -->
-            <path d="M 20 62 L 78 30 C 84 46, 84 60, 80 66 C 66 79, 42 77, 20 62 Z"
-                  fill="#ff9f43" stroke="#2d231e" stroke-width="3.5" stroke-linejoin="round"/>
-            <!-- Seed pocket dots along top hollow curve -->
-            <ellipse cx="44" cy="55" rx="2" ry="3.5" transform="rotate(-30 44 55)" fill="#f5cd79"/>
-            <ellipse cx="54" cy="50" rx="2" ry="3.5" transform="rotate(-30 54 50)" fill="#f5cd79"/>
-            <ellipse cx="64" cy="44" rx="2" ry="3.5" transform="rotate(-30 64 44)" fill="#f5cd79"/>
-            <!-- Slice shine -->
-            <path d="M 25 60 L 73 34"
-                  stroke="#ffffff" stroke-width="3" stroke-linecap="round" opacity="0.6"/>
+            <!-- Alias to Lemon -->
+            <path d="M 26 42 C 22 30, 32 20, 46 24 C 38 34, 30 38, 26 42 Z"
+                  fill="#2ed573" stroke="#2d231e" stroke-width="3.2" stroke-linejoin="round"/>
+            <path d="M 14 54 C 18 48, 22 44, 26 41 C 36 31, 64 31, 74 41 C 78 44, 82 48, 86 54 C 82 60, 78 64, 74 67 C 64 77, 36 77, 26 67 C 22 64, 18 60, 14 54 Z"
+                  fill="#fff200" stroke="#2d231e" stroke-width="3.5" stroke-linejoin="round"/>
+            <path d="M 32 43 C 42 36, 58 36, 68 42"
+                  fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" opacity="0.75"/>
         `,
 
         // =========================================================================
@@ -284,27 +317,41 @@
         `,
 
         pancake: `
-            <!-- Pancakes -->
-            <!-- Plate base -->
-            <ellipse cx="50" cy="80" rx="42" ry="9"
-                     fill="#f1f2f6" stroke="#2d231e" stroke-width="3.5"/>
-            <!-- Bottom pancake -->
-            <path d="M 18 68 C 18 63, 82 63, 82 68 C 82 74, 18 74, 18 68 Z"
-                  fill="#eccc68" stroke="#2d231e" stroke-width="3.5"/>
-            <!-- Middle pancake -->
-            <path d="M 20 56 C 20 51, 80 51, 80 56 C 80 62, 20 62, 20 56 Z"
-                  fill="#f5cd79" stroke="#2d231e" stroke-width="3.5"/>
-            <!-- Top pancake -->
-            <ellipse cx="50" cy="45" rx="28" ry="9.5"
-                     fill="#f5cd79" stroke="#2d231e" stroke-width="3.5"/>
-            <!-- Rich maple syrup dripping down -->
-            <path d="M 32 46 C 36 53, 40 57, 44 53 C 48 49, 52 64, 56 57 C 60 51, 64 55, 68 46 Z"
-                  fill="#d35400" stroke="#2d231e" stroke-width="2.5" stroke-linejoin="round"/>
-            <!-- Melting butter pat on top -->
-            <path d="M 44 38 L 56 34 L 58 41 L 46 45 Z"
-                  fill="#fff200" stroke="#2d231e" stroke-width="3" stroke-linejoin="round"/>
-            <!-- Butter shine -->
-            <circle cx="48" cy="38" r="1.5" fill="#ffffff"/>
+            <!-- Fluffy 3-Stack of Golden-Brown Pancakes with Maple Syrup & Butter -->
+            <!-- Bottom pancake fluffy side & grilled top -->
+            <path d="M 16 66 C 16 58, 84 58, 84 66 C 84 76, 16 76, 16 66 Z"
+                  fill="#f8dda4" stroke="#2d231e" stroke-width="3.5" stroke-linejoin="round"/>
+            <ellipse cx="50" cy="63" rx="31" ry="8.5" fill="#d9822b"/>
+
+            <!-- Middle pancake fluffy side & grilled top -->
+            <path d="M 18 54 C 18 46, 82 46, 82 54 C 82 64, 18 64, 18 54 Z"
+                  fill="#f8dda4" stroke="#2d231e" stroke-width="3.5" stroke-linejoin="round"/>
+            <ellipse cx="50" cy="51" rx="29" ry="8" fill="#d9822b"/>
+
+            <!-- Top pancake fluffy side & golden grilled top -->
+            <path d="M 20 42 C 20 34, 80 34, 80 42 C 80 52, 20 52, 20 42 Z"
+                  fill="#fae3b4" stroke="#2d231e" stroke-width="3.5" stroke-linejoin="round"/>
+            <ellipse cx="50" cy="39" rx="27" ry="8.5" fill="#e08e36" stroke="#2d231e" stroke-width="2"/>
+
+            <!-- Glossy maple syrup pool on top with smooth drips down the stack -->
+            <path d="M 26 38
+                     C 26 32, 74 32, 74 38
+                     C 74 42, 71 44, 68 45
+                     C 68 53, 63 53, 63 46
+                     C 59 47, 56 48, 54 58
+                     C 54 64, 47 64, 47 57
+                     C 44 48, 41 47, 38 52
+                     C 35 56, 31 54, 32 45
+                     C 28 43, 26 41, 26 38 Z"
+                  fill="#a04000" stroke="#2d231e" stroke-width="2.8" stroke-linejoin="round"/>
+            <!-- Syrup shine -->
+            <path d="M 33 36 C 40 34, 58 34, 65 36"
+                  fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" opacity="0.55"/>
+
+            <!-- Melting square pat of yellow butter on top -->
+            <polygon points="41,35 53,32 59,38 47,41"
+                     fill="#fff200" stroke="#2d231e" stroke-width="3" stroke-linejoin="round"/>
+            <circle cx="48" cy="36" r="1.6" fill="#ffffff" opacity="0.85"/>
         `,
 
         cupcake: `
@@ -1268,7 +1315,8 @@
         carrot:       { name: 'Carrot', category: 'veggie', sound: 'crunch' },
         strawberry:   { name: 'Strawberry', category: 'fruit', sound: 'pop' },
         mango:        { name: 'Mango', category: 'fruit', sound: 'pop' },
-        melon:        { name: 'Melon', category: 'fruit', sound: 'crunch' },
+        lemon:        { name: 'Lemon', category: 'fruit', sound: 'crunch' },
+        melon:        { name: 'Lemon', category: 'fruit', sound: 'crunch' },
 
         // Foods & Snacks
         cheese:       { name: 'Cheese', category: 'food', sound: 'squeak' },

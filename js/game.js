@@ -8,6 +8,7 @@ window.LeviGame = (function () {
 
   let state = {
     screen: 'overworld', // 'overworld' | 'scene'
+    currentIsland: 1,
     currentLevelId: 1,
     highestUnlocked: 1,
     completed: {}, // { [levelId]: true }
@@ -26,6 +27,7 @@ window.LeviGame = (function () {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw);
+        state.currentIsland = parsed.currentIsland || 1;
         state.highestUnlocked = parsed.highestUnlocked || 1;
         state.completed = parsed.completed || {};
         state.stars = parsed.stars || {};
@@ -42,6 +44,7 @@ window.LeviGame = (function () {
       localStorage.setItem(
         STORAGE_KEY,
         JSON.stringify({
+          currentIsland: state.currentIsland,
           highestUnlocked: state.highestUnlocked,
           completed: state.completed,
           stars: state.stars,
@@ -109,6 +112,33 @@ window.LeviGame = (function () {
         }
       });
     }
+
+    document.querySelectorAll('.btn-island-tab').forEach((tabBtn) => {
+      tabBtn.addEventListener('click', () => {
+        const islandId = parseInt(tabBtn.getAttribute('data-island-id'), 10);
+        if (!islandId) return;
+        if (window.LeviAudio) window.LeviAudio.playPop();
+        state.currentIsland = islandId;
+        const firstIslandLvl = (islandId - 1) * 16 + 1;
+        const lastIslandLvl = islandId * 16;
+        if (state.currentLevelId < firstIslandLvl || state.currentLevelId > lastIslandLvl) {
+          window.LeviOverworld.setLeviNode(firstIslandLvl);
+        }
+        saveProgress();
+        updateIslandTabs();
+        if (state.screen === 'overworld') {
+          window.LeviOverworld.render(state);
+        }
+      });
+    });
+    updateIslandTabs();
+  }
+
+  function updateIslandTabs() {
+    document.querySelectorAll('.btn-island-tab').forEach((tabBtn) => {
+      const islandId = parseInt(tabBtn.getAttribute('data-island-id'), 10);
+      tabBtn.classList.toggle('active', islandId === state.currentIsland);
+    });
   }
 
   function updateUnlockAllButton(btn) {
@@ -120,6 +150,7 @@ window.LeviGame = (function () {
     state.screen = 'overworld';
     const topHeader = document.getElementById('top-header');
     if (topHeader) topHeader.classList.remove('hidden');
+    updateIslandTabs();
 
     document.getElementById('screen-overworld').classList.remove('hidden');
     document.getElementById('screen-scene').classList.add('hidden');
@@ -133,6 +164,8 @@ window.LeviGame = (function () {
 
     state.screen = 'scene';
     state.currentLevelId = levelId;
+    state.currentIsland = levelDef.island || Math.ceil(levelId / 16);
+    updateIslandTabs();
     window.LeviOverworld.setLeviNode(levelId);
 
     const topHeader = document.getElementById('top-header');
@@ -514,18 +547,23 @@ window.LeviGame = (function () {
       return;
     }
 
-    // 2. Campfire Light Switch
+    // 2. Campfire Light Switch or Direct Tap-Light Puzzle
     if (targetDef.role === 'light') {
       if (targetId === activePuzzle.targetLight) {
         if (!tState.lit) {
           tState.lit = true;
+          tState.happy = true;
           puzzleProgress.lightTurnedOn = true;
           if (window.LeviAudio) {
             window.LeviAudio.playSwitch();
             window.LeviAudio.playStepSuccess();
           }
           updateSceneDOM();
-          checkCompoundCompletion();
+          if (activePuzzle.type === 'tap_light') {
+            triggerPuzzleComplete();
+          } else {
+            checkCompoundCompletion();
+          }
         }
       } else {
         triggerGentleRejection(targetEl);
@@ -809,10 +847,11 @@ window.LeviGame = (function () {
     if (puzzleProgress.completed) return;
     puzzleProgress.completed = true;
 
+    const totalLevels = window.LeviLevels ? window.LeviLevels.LEVELS.length : 64;
     const lvlId = state.currentLevelId;
     state.completed[lvlId] = true;
     state.stars[lvlId] = Math.min(3, (state.stars[lvlId] || 0) + 1);
-    if (lvlId >= state.highestUnlocked && lvlId < 16) {
+    if (lvlId >= state.highestUnlocked && lvlId < totalLevels) {
       state.highestUnlocked = lvlId + 1;
     }
     saveProgress();
@@ -871,21 +910,33 @@ window.LeviGame = (function () {
   }
 
   /**
-   * Minimal completion screen: just stars and a "Level N" button!
+   * Minimal completion screen: just stars and a "Level N" (or "🏝️ N") button!
    */
   function showVictoryOverlay() {
     const victoryModal = document.getElementById('victory-overlay');
     if (!victoryModal || !victoryModal.classList.contains('hidden')) return;
 
-    const nextLevelId = state.currentLevelId < 16 ? state.currentLevelId + 1 : 1;
-    const isFinalLevel = state.currentLevelId === 16;
+    const totalLevels = window.LeviLevels ? window.LeviLevels.LEVELS.length : 64;
+    const isFinalLevel = state.currentLevelId >= totalLevels;
+    const currentDef = window.LeviLevels ? window.LeviLevels.getLevel(state.currentLevelId) : null;
+    const nextLevelId = !isFinalLevel ? state.currentLevelId + 1 : 1;
+    const nextDef = !isFinalLevel && window.LeviLevels ? window.LeviLevels.getLevel(nextLevelId) : null;
+
+    let nextButtonLabel = '🗺️';
+    if (!isFinalLevel && nextDef) {
+      if (currentDef && nextDef.island !== currentDef.island) {
+        nextButtonLabel = `🏝️ ${nextDef.island} ➔`;
+      } else {
+        nextButtonLabel = `Level ${nextDef.islandLevel} ➔`;
+      }
+    }
 
     victoryModal.innerHTML = `
       <div class="victory-banner-card">
         <div class="victory-stars-row">⭐ 🌟 ⭐</div>
         <div class="victory-buttons-row">
           <button type="button" class="btn-game btn-primary btn-next-level" id="btn-victory-next">
-            ${isFinalLevel ? '🗺️' : `Level ${nextLevelId} ➔`}
+            ${nextButtonLabel}
           </button>
         </div>
       </div>
@@ -898,9 +949,17 @@ window.LeviGame = (function () {
         window.LeviAudio.playPop();
       }
       const fromId = state.currentLevelId;
-      const toId = state.currentLevelId < 16 ? state.currentLevelId + 1 : 16;
+      const toId = !isFinalLevel ? state.currentLevelId + 1 : totalLevels;
       if (isFinalLevel) {
         showOverworld(fromId, toId);
+      } else if (currentDef && nextDef && nextDef.island !== currentDef.island) {
+        // Advancing to the next island! Switch to the new island and start its first level
+        state.currentIsland = nextDef.island;
+        saveProgress();
+        showOverworld(toId, toId);
+        setTimeout(() => {
+          startLevel(toId);
+        }, 420);
       } else {
         showOverworld(fromId, toId, () => {
           startLevel(toId);

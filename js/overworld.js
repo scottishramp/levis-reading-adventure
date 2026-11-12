@@ -1,7 +1,7 @@
 /**
- * Levi's Reading Adventure - Mario-Style Overworld Map
- * Renders a vibrant interactive SVG storybook island map with 4 biome worlds,
- * winding paths, 16 numbered level pads, star badges, and an animated walking Levi character.
+ * Levi's Reading Adventure - 4-Island Mario-Style Overworld Map
+ * Renders 4 distinct themed islands (16 levels per island = 64 levels total)
+ * with winding paths, numbered level pads (1..16), star badges, and animated Levi.
  */
 
 window.LeviOverworld = (function () {
@@ -10,30 +10,117 @@ window.LeviOverworld = (function () {
   let currentLeviNodeId = 1;
   let isWalking = false;
 
+  const ISLAND_THEMES = {
+    1: {
+      oceanTop: '#38bdf8',
+      oceanMid: '#0ea5e9',
+      oceanBot: '#0284c7',
+      beach: '#fde68a',
+      land1Top: '#86efac',
+      land1Bot: '#22c55e',
+      land2: '#fef08a',
+      land3Top: '#a78bfa',
+      land3Bot: '#7c3aed',
+      land4Top: '#f8fafc',
+      land4Bot: '#cbd5e1',
+      castleRoof1: '#ec4899',
+      castleRoof2: '#3b82f6'
+    },
+    2: {
+      oceanTop: '#2dd4bf',
+      oceanMid: '#14b8a6',
+      oceanBot: '#0f766e',
+      beach: '#fef08a',
+      land1Top: '#fde047',
+      land1Bot: '#eab308',
+      land2: '#fed7aa',
+      land3Top: '#6ee7b7',
+      land3Bot: '#059669',
+      land4Top: '#fca5a5',
+      land4Bot: '#dc2626',
+      castleRoof1: '#f59e0b',
+      castleRoof2: '#10b981'
+    },
+    3: {
+      oceanTop: '#818cf8',
+      oceanMid: '#6366f1',
+      oceanBot: '#4338ca',
+      beach: '#e9d5ff',
+      land1Top: '#c084fc',
+      land1Bot: '#9333ea',
+      land2: '#fbcfe8',
+      land3Top: '#38bdf8',
+      land3Bot: '#0284c7',
+      land4Top: '#e2e8f0',
+      land4Bot: '#94a3b8',
+      castleRoof1: '#a855f7',
+      castleRoof2: '#ec4899'
+    },
+    4: {
+      oceanTop: '#fb923c',
+      oceanMid: '#f97316',
+      oceanBot: '#c2410c',
+      beach: '#fef08a',
+      land1Top: '#fcd34d',
+      land1Bot: '#d97706',
+      land2: '#fde68a',
+      land3Top: '#f43f5e',
+      land3Bot: '#be123c',
+      land4Top: '#fef9c3',
+      land4Bot: '#facc15',
+      castleRoof1: '#eab308',
+      castleRoof2: '#ef4444'
+    }
+  };
+
   function init(container, onSelectLevel) {
     containerEl = container;
     onSelectLevelCallback = onSelectLevel;
   }
 
+  function isLevelUnlocked(lvl, progressState) {
+    if (progressState.unlockAll) return true;
+    // Level 1 of the current island is always playable when viewing that island,
+    // and any level <= highestUnlocked (or whose previous level on the island is completed) is unlocked
+    if (lvl.islandLevel === 1) return true;
+    if (lvl.id <= progressState.highestUnlocked) return true;
+    const prevGlobalId = lvl.id - 1;
+    if (progressState.completed[prevGlobalId]) return true;
+    return false;
+  }
+
   function render(progressState, animateFromNodeId, animateToNodeId, onWalkComplete) {
     if (!containerEl) return;
-    const levels = window.LeviLevels.LEVELS;
-    const unlockedMax = progressState.unlockAll ? 16 : progressState.highestUnlocked;
+    const islandId = progressState.currentIsland || 1;
+    const theme = ISLAND_THEMES[islandId] || ISLAND_THEMES[1];
+    const levels = window.LeviLevels.getLevelsByIsland(islandId);
 
-    if (animateToNodeId) {
-      currentLeviNodeId = animateFromNodeId || animateToNodeId;
-    } else if (!currentLeviNodeId) {
-      currentLeviNodeId = Math.min(unlockedMax, 16);
+    if (animateToNodeId && levels.some((l) => l.id === animateToNodeId)) {
+      currentLeviNodeId =
+        animateFromNodeId && levels.some((l) => l.id === animateFromNodeId)
+          ? animateFromNodeId
+          : animateToNodeId;
+    } else if (!levels.some((l) => l.id === currentLeviNodeId)) {
+      // Find highest unlocked level on this island
+      let best = levels[0].id;
+      levels.forEach((l) => {
+        if (isLevelUnlocked(l, progressState)) {
+          best = l.id;
+        }
+      });
+      currentLeviNodeId = best;
     }
 
-    // Build path segments between consecutive levels
+    // Build path segments between consecutive levels on this island
     let roadUnderlayPaths = '';
     let roadDashPaths = '';
     for (let i = 0; i < levels.length - 1; i++) {
       const a = levels[i];
       const b = levels[i + 1];
       const isCompletedSegment =
-        progressState.unlockAll || progressState.completed[a.id] || b.id <= unlockedMax;
+        progressState.unlockAll ||
+        progressState.completed[a.id] ||
+        isLevelUnlocked(b, progressState);
       const midX = (a.mapX + b.mapX) / 2;
       const midY = (a.mapY + b.mapY) / 2 - 18;
       const d = `M ${a.mapX} ${a.mapY} Q ${midX} ${midY} ${b.mapX} ${b.mapY}`;
@@ -47,12 +134,14 @@ window.LeviOverworld = (function () {
       }" stroke-width="8" stroke-linecap="round" stroke-dasharray="1 18" />`;
     }
 
-    // Build Level Nodes SVG groups (clean numbered pads without text clutter)
+    // Build Level Nodes SVG groups (numbered 1..16 on each island)
     let nodesMarkup = '';
     levels.forEach((lvl) => {
       const isCompleted = !!progressState.completed[lvl.id];
-      const isUnlocked = progressState.unlockAll || lvl.id <= unlockedMax;
-      const isNextToPlay = !isCompleted && lvl.id === unlockedMax;
+      const isUnlocked = isLevelUnlocked(lvl, progressState);
+      const nextLv = levels.find((x) => x.id === lvl.id + 1);
+      const isNextToPlay =
+        isUnlocked && !isCompleted && (!nextLv || !progressState.completed[nextLv.id]);
 
       let padFill = '#94a3b8';
       let padRim = '#475569';
@@ -84,20 +173,19 @@ window.LeviOverworld = (function () {
         <g class="map-node ${isUnlocked ? 'unlocked' : 'locked'} ${
         isNextToPlay ? 'next-node' : ''
       }" data-level-id="${lvl.id}" tabindex="${isUnlocked ? '0' : '-1'}" role="button" aria-label="Level ${
-        lvl.id
+        lvl.islandLevel
       }">
           ${pulseRing}
-          <!-- 3D shadow & base -->
           <ellipse cx="${lvl.mapX}" cy="${lvl.mapY + 9}" rx="32" ry="21" fill="rgba(0,0,0,0.28)"/>
           <ellipse cx="${lvl.mapX}" cy="${lvl.mapY + 5}" rx="30" ry="19" fill="${padRim}" stroke="#2d231e" stroke-width="3"/>
           <ellipse cx="${lvl.mapX}" cy="${lvl.mapY}" rx="30" ry="19" fill="${padFill}" stroke="#2d231e" stroke-width="3"/>
           <ellipse cx="${lvl.mapX}" cy="${lvl.mapY - 2}" rx="22" ry="12" fill="rgba(255,255,255,0.28)"/>
 
-          <!-- Level Number -->
+          <!-- Local Island Level Number (1..16) -->
           <text x="${lvl.mapX}" y="${
         lvl.mapY + 7
       }" text-anchor="middle" font-family="'Fredoka', 'Nunito', sans-serif" font-weight="800" font-size="20" fill="#ffffff" stroke="#2d231e" stroke-width="3.5" paint-order="stroke">${
-        lvl.id
+        lvl.islandLevel
       }</text>
           ${starBadge}
         </g>
@@ -110,36 +198,35 @@ window.LeviOverworld = (function () {
       : '';
 
     containerEl.innerHTML = `
-      <div class="overworld-wrapper">
+      <div class="overworld-wrapper" style="background: ${theme.oceanMid};">
         <svg class="overworld-svg" viewBox="0 0 1000 620" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <linearGradient id="oceanGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#38bdf8"/>
-              <stop offset="60%" stop-color="#0ea5e9"/>
-              <stop offset="100%" stop-color="#0284c7"/>
+              <stop offset="0%" stop-color="${theme.oceanTop}"/>
+              <stop offset="60%" stop-color="${theme.oceanMid}"/>
+              <stop offset="100%" stop-color="${theme.oceanBot}"/>
             </linearGradient>
             <linearGradient id="meadowGrad" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stop-color="#86efac"/>
-              <stop offset="55%" stop-color="#4ade80"/>
-              <stop offset="100%" stop-color="#22c55e"/>
+              <stop offset="0%" stop-color="${theme.land1Top}"/>
+              <stop offset="100%" stop-color="${theme.land1Bot}"/>
             </linearGradient>
             <linearGradient id="forestGrad" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stop-color="#a78bfa"/>
-              <stop offset="100%" stop-color="#7c3aed"/>
+              <stop offset="0%" stop-color="${theme.land3Top}"/>
+              <stop offset="100%" stop-color="${theme.land3Bot}"/>
             </linearGradient>
             <linearGradient id="snowGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#f8fafc"/>
-              <stop offset="100%" stop-color="#cbd5e1"/>
+              <stop offset="0%" stop-color="${theme.land4Top}"/>
+              <stop offset="100%" stop-color="${theme.land4Bot}"/>
             </linearGradient>
             <filter id="islandShadow" x="-10%" y="-10%" width="120%" height="120%">
-              <feDropShadow dx="0" dy="10" stdDeviation="6" flood-color="#0369a1" flood-opacity="0.45"/>
+              <feDropShadow dx="0" dy="10" stdDeviation="6" flood-color="rgba(0,0,0,0.35)" flood-opacity="0.5"/>
             </filter>
           </defs>
 
           <!-- Ocean Background -->
           <rect width="1000" height="620" fill="url(#oceanGrad)"/>
 
-          <!-- Animated Ocean Waves -->
+          <!-- Ocean Waves -->
           <g stroke="rgba(255,255,255,0.35)" stroke-width="3.5" stroke-linecap="round" fill="none" class="ocean-waves">
             <path d="M 40 90 Q 60 80 80 90 T 120 90"/>
             <path d="M 150 560 Q 170 550 190 560 T 230 560"/>
@@ -151,13 +238,13 @@ window.LeviOverworld = (function () {
           <!-- Main Storybook Continent & Biome Regions -->
           <g filter="url(#islandShadow)">
             <path d="M 55 510 C 35 380, 90 240, 230 200 C 330 170, 420 110, 560 130 C 660 145, 730 90, 860 85 C 950 82, 975 180, 955 310 C 940 420, 950 510, 830 535 C 710 560, 580 555, 470 510 C 350 470, 260 555, 130 545 Z"
-                  fill="#fde68a" stroke="#2d231e" stroke-width="5"/>
+                  fill="${theme.beach}" stroke="#2d231e" stroke-width="5"/>
 
             <path d="M 75 495 C 60 385, 110 260, 245 220 C 340 190, 430 140, 550 155 C 640 170, 620 330, 520 430 C 420 510, 250 535, 130 525 Z"
                   fill="url(#meadowGrad)" stroke="#2d231e" stroke-width="4"/>
 
             <path d="M 440 165 C 520 135, 635 160, 650 255 C 660 325, 580 355, 515 310 C 460 270, 410 210, 440 165 Z"
-                  fill="#fef08a" stroke="#eab308" stroke-width="3"/>
+                  fill="${theme.land2}" stroke="#eab308" stroke-width="3"/>
 
             <path d="M 485 450 C 510 340, 620 275, 735 285 C 815 295, 825 460, 745 520 C 665 565, 510 545, 485 450 Z"
                   fill="url(#forestGrad)" stroke="#2d231e" stroke-width="4"/>
@@ -201,9 +288,9 @@ window.LeviOverworld = (function () {
             <rect x="12" y="34" width="56" height="44" fill="#f8fafc"/>
             <rect x="2" y="20" width="20" height="58" fill="#e2e8f0"/>
             <rect x="58" y="20" width="20" height="58" fill="#e2e8f0"/>
-            <polygon points="-2,20 12,0 26,20" fill="#ec4899"/>
-            <polygon points="54,20 68,0 82,20" fill="#ec4899"/>
-            <polygon points="22,34 40,8 58,34" fill="#3b82f6"/>
+            <polygon points="-2,20 12,0 26,20" fill="${theme.castleRoof1}"/>
+            <polygon points="54,20 68,0 82,20" fill="${theme.castleRoof1}"/>
+            <polygon points="22,34 40,8 58,34" fill="${theme.castleRoof2}"/>
             <path d="M 30 78 L 30 56 A 10 10 0 0 1 50 56 L 50 78 Z" fill="#b45309"/>
             <path d="M 40 8 L 40 -6 L 56 -1 L 40 4" fill="#facc15"/>
           </g>
